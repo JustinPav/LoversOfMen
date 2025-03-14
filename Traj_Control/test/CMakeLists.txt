@@ -13,16 +13,23 @@ find_package(trajectory_msgs REQUIRED)
 find_package(moveit_core REQUIRED)
 find_package(moveit_ros_planning REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
+find_package(moveit_task_constructor_core REQUIRED)
+find_package(moveit_task_constructor_msgs REQUIRED)
 
 add_executable(test_node src/test.cpp)
 ament_target_dependencies(test_node rclcpp std_msgs trajectory_msgs)
 
 add_executable(mtc_test src/mtc_moveit.cpp)
-ament_target_dependencies(mtc_test rclcpp std_msgs trajectory_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface )
+ament_target_dependencies(mtc_test rclcpp std_msgs trajectory_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface)
+
+
+add_executable(mtc_main src/main.cpp src/mtc_task.cpp)
+ament_target_dependencies(mtc_main rclcpp std_msgs trajectory_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface moveit_task_constructor_core moveit_task_constructor_msgs)
 
 install(TARGETS
   test_node
   mtc_test
+  mtc_main
   DESTINATION lib/${PROJECT_NAME}
 )
 
