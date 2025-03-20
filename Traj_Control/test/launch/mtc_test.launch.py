@@ -1,30 +1,30 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from moveit_configs_utils import MoveItConfigsBuilder
 from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
-    config_dir = os.path.join(get_package_share_directory('test'), 'config')
+    package_share_dir = get_package_share_directory('test')
+    config_dir = os.path.join(package_share_dir, 'config')
 
-    urdf_path = os.path.join(config_dir, 'ur3e_robot.urdf')
-    srdf_path = os.path.join(config_dir, 'ur3e_robot.srdf')
-    kinematics_path = os.path.join(config_dir, 'kinematics.yaml')
-    joint_limits_path = os.path.join(config_dir, 'joint_limits.yaml')
-    ompl_path = os.path.join(config_dir, 'ompl_planning.yaml')
-    controllers_path = os.path.join(config_dir, 'controllers.yaml')
+    moveit_config = MoveItConfigsBuilder(robot_name="ur3e", package_name="test")
+    moveit_config.robot_description_kinematics(os.path.join(config_dir, "kinematics.yaml"))
+    moveit_config.planning_pipelines(pipelines=["ompl", "chomp", "pilz_industrial_motion_planner"])
+    moveit_config = moveit_config.to_moveit_configs()
+
+    move_group_capabilities = {
+        "capabilities": "move_group/ExecuteTaskSolutionCapability"
+    }
 
     return LaunchDescription([
         Node(
-            package='test',
-            executable='mtc_main',
-            output='screen',
+            package="test",
+            executable="mtc_main",
+            output="screen",
             parameters=[
-                {'robot_description': open(urdf_path).read()},
-                {'robot_description_semantic': open(srdf_path).read()},
-                kinematics_path,
-                joint_limits_path,
-                ompl_path,
-                controllers_path,
+                moveit_config.to_dict(),
+                move_group_capabilities
             ]
         )
     ])

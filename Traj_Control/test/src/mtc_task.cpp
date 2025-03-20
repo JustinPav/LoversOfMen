@@ -15,7 +15,7 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     // Define pickup waypoints for placing collision objects (e.g., boxes)
     // Here, we define three pickup locations.
     geometry_msgs::msg::Pose p1;
-    p1.position.x = 0.35;
+    p1.position.x = 0.4;
     p1.position.y = -0.2;
     p1.position.z = 0.05;
     p1.orientation.w = 1.0;
@@ -25,7 +25,7 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     // Update these values to reflect your real task.
     // current_box_pose_: approach pose above the box
     current_box_pose_ = p1;
-    current_box_pose_.position.z += 0.1; // 0.1 m above the box
+    current_box_pose_.position.z += 0.2; // 0.1 m above the box
 
     // lifted_pose_: after lifting the box vertically by 0.1 m
     lifted_pose_ = current_box_pose_;
@@ -159,7 +159,7 @@ mtc::Task MTCTaskNode::createTask()
     auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
     cartesian_planner->setMaxVelocityScalingFactor(1.0);
     cartesian_planner->setMaxAccelerationScalingFactor(1.0);
-    cartesian_planner->setStepSize(.01);
+    cartesian_planner->setStepSize(.005);
 
     // Stage 2: Move to box (approach above the box)
     auto stage_move_to_box = std::make_unique<mtc::stages::MoveTo>("move to box", interpolation_planner);
