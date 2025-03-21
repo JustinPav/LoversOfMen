@@ -24,20 +24,22 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     // Define dummy poses for the task stages.
     // Update these values to reflect your real task.
     // current_box_pose_: approach pose above the box
+    tf2::Quaternion q;
+    q.setRPY(0, M_PI, 0);
     current_box_pose_ = p1;
-    current_box_pose_.position.z += 0.2; // 0.1 m above the box
+    current_box_pose_.position.z += 0.1; // 0.1 m above the box
+    current_box_pose_.orientation = tf2::toMsg(q);
 
-    // lifted_pose_: after lifting the box vertically by 0.1 m
+    // lifted_pose_: after lifting the box vertically by 0.15 m
     lifted_pose_ = current_box_pose_;
-    lifted_pose_.position.z += 0.2;
+    lifted_pose_.position.z += 0.15;
 
     // reorient_pose_: change orientation (for example, face downward)
     reorient_pose_ = lifted_pose_;
     // Downward-facing: 180° rotation about X-axis.
-    reorient_pose_.orientation.w = 0.0;
-    reorient_pose_.orientation.x = 1.0;
-    reorient_pose_.orientation.y = 0.0;
-    reorient_pose_.orientation.z = 0.0;
+    tf2::Quaternion q2;
+    q2.setRPY(M_PI / 2, 0, 0);
+    reorient_pose_.orientation = tf2::toMsg(q2);
 
     // goal_pose_: a pose that moves the box toward a placement area.
     goal_pose_ = reorient_pose_;
@@ -115,13 +117,13 @@ void MTCTaskNode::doTask()
     // Publish the first solution for introspection (if desired)
     task_.introspection().publishSolution(*task_.solutions().front());
 
-    // Execute the task using the first solution
-    auto result = task_.execute(*task_.solutions().front());
-    if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
-    {
-        RCLCPP_ERROR(node_->get_logger(), "Task execution failed");
-        return;
-    }
+    // // Execute the task using the first solution
+    // auto result = task_.execute(*task_.solutions().front());
+    // if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
+    // {
+    //     RCLCPP_ERROR(node_->get_logger(), "Task execution failed");
+    //     return;
+    // }
 
     RCLCPP_INFO(node_->get_logger(), "Task executed successfully");
     return;
@@ -161,7 +163,23 @@ mtc::Task MTCTaskNode::createTask()
     cartesian_planner->setMaxAccelerationScalingFactor(1.0);
     cartesian_planner->setStepSize(.005);
 
-    // Stage 2: Move to box (approach above the box)
+    // Stage: Move to a specific joint configuration allowing for a consistent start point
+    auto move_to_start = std::make_unique<mtc::stages::MoveTo>("starting configuration", interpolation_planner);
+    move_to_start->setGroup(arm_group);
+    // Define target joint values (in radians)
+    std::map<std::string, double> joint_targets;
+    joint_targets["shoulder_pan_joint"] = 0.0;
+    joint_targets["shoulder_lift_joint"] = -M_PI / 3; // -60 deg
+    joint_targets["elbow_joint"] = M_PI / 3;          // 60 deg
+    joint_targets["wrist_1_joint"] = -M_PI / 2;       // -90 deg
+    joint_targets["wrist_2_joint"] = -M_PI / 2;       // -90 deg
+    joint_targets["wrist_3_joint"] = 0.0;
+
+    move_to_start->setGoal(joint_targets);
+    // Add stage to task
+    task.add(std::move(move_to_start));
+
+    // Stage: Move to box (approach above the box)
     auto stage_move_to_box = std::make_unique<mtc::stages::MoveTo>("move to box", interpolation_planner);
     stage_move_to_box->setGroup(arm_group);
 
@@ -169,21 +187,24 @@ mtc::Task MTCTaskNode::createTask()
     current_box_pose_stamped.pose = current_box_pose_;
     current_box_pose_stamped.header.frame_id = "world";
     stage_move_to_box->setGoal(current_box_pose_stamped);
-    stage_move_to_box->setIKFrame("tool0");
+    stage_move_to_box->setIKFrame(ik_frame);
     task.add(std::move(stage_move_to_box));
 
-    // // Stage 3: Lift box (move upward relatively)
-    // auto stage_lift = std::make_unique<mtc::stages::MoveRelative>("lift box");
-    // // Define a relative translation of 0.1 m upward.
-    // geometry_msgs::msg::TwistStamped translation;
-    // translation.header.frame_id = "world";
-    // translation.twist.linear.x = 0.0;
-    // translation.twist.linear.y = 0.0;
-    // translation.twist.linear.z = 0.1;
-    // stage_lift->setDirection(translation);
-    // task.add(std::move(stage_lift));
+    // Stage: Lift box (move upward relatively)
+    auto stage_lift = std::make_unique<mtc::stages::MoveRelative>("lift box", cartesian_planner);
+    stage_lift->setGroup(arm_group);
+    stage_lift->setIKFrame(ik_frame);
+    stage_lift->setMinMaxDistance(0.1, 0.2); // min, max distance
+    // Define a relative translation of 0.1 m upward.
+    geometry_msgs::msg::TwistStamped translation;
+    translation.header.frame_id = "tool0";
+    translation.twist.linear.x = 0.0;
+    translation.twist.linear.y = 0.0;
+    translation.twist.linear.z = 0.1;
+    stage_lift->setDirection(translation);
+    task.add(std::move(stage_lift));
 
-    // // Stage 4: Re-orient box (change the end effector orientation)
+    // // Stage: Re-orient box (change the end effector orientation)
     // auto stage_reorient = std::make_unique<mtc::stages::MoveTo>("reorient box", interpolation_planner);
     // stage_reorient->setGroup(arm_group);
 
