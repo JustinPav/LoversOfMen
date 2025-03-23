@@ -36,18 +36,17 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
 
     // reorient_pose_: change orientation (for example, face downward)
     reorient_pose_ = lifted_pose_;
-    // Downward-facing: 180° rotation about X-axis.
-    tf2::Quaternion q2;
-    q2.setRPY(M_PI / 2, 0, 0);
-    reorient_pose_.orientation = tf2::toMsg(q2);
+    // tf2::Quaternion q2;
+    // q2.setRPY(M_PI / 2, 0, 0);
+    // reorient_pose_.orientation = tf2::toMsg(q2);
 
     // goal_pose_: a pose that moves the box toward a placement area.
     goal_pose_ = reorient_pose_;
-    goal_pose_.position.x += 0.2; // shift in x
+    goal_pose_.position.y += 0.45; // shift in x
 
     // place_pose_: final placement pose.
     place_pose_ = goal_pose_;
-    place_pose_.position.z = 0.3; // assume table height
+    place_pose_.position.z = current_box_pose_.position.z; // assume table height
 }
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr MTCTaskNode::getNodeBaseInterface()
@@ -192,45 +191,51 @@ mtc::Task MTCTaskNode::createTask()
 
     // Stage: Lift box (move upward relatively)
     auto stage_lift = std::make_unique<mtc::stages::MoveRelative>("lift box", cartesian_planner);
+    stage_lift->properties().set("marker_ns", "lift_box");
     stage_lift->setGroup(arm_group);
     stage_lift->setIKFrame(ik_frame);
-    stage_lift->setMinMaxDistance(0.1, 0.2); // min, max distance
-    // Define a relative translation of 0.1 m upward.
-    geometry_msgs::msg::TwistStamped translation;
-    translation.header.frame_id = "tool0";
-    translation.twist.linear.x = 0.0;
-    translation.twist.linear.y = 0.0;
-    translation.twist.linear.z = 0.1;
-    stage_lift->setDirection(translation);
+    stage_lift->setMinMaxDistance(0.05, 0.15); // min, max distance
+
+    geometry_msgs::msg::Vector3Stamped vec;
+    vec.header.frame_id = "world";
+    vec.vector.z = 1.0;
+    stage_lift->setDirection(vec);
     task.add(std::move(stage_lift));
 
-    // // Stage: Re-orient box (change the end effector orientation)
-    // auto stage_reorient = std::make_unique<mtc::stages::MoveTo>("reorient box", interpolation_planner);
-    // stage_reorient->setGroup(arm_group);
+    // Stage: Re-orient box (change the end effector orientation)
+    auto stage_reorient = std::make_unique<mtc::stages::MoveTo>("reorient box", interpolation_planner);
+    stage_reorient->setGroup(arm_group);
 
-    // geometry_msgs::msg::PoseStamped reorient_pose_stamped;
-    // reorient_pose_stamped.pose = reorient_pose_;
-    // reorient_pose_stamped.header.frame_id = "world";
-    // stage_reorient->setGoal(reorient_pose_stamped);
-    // task.add(std::move(stage_reorient));
+    geometry_msgs::msg::PoseStamped reorient_pose_stamped;
+    reorient_pose_stamped.pose = reorient_pose_;
+    reorient_pose_stamped.header.frame_id = "world";
+    stage_reorient->setGoal(reorient_pose_stamped);
+    stage_reorient->setIKFrame(ik_frame);
+    task.add(std::move(stage_reorient));
 
-    // // Stage 5: Move to goal pose (transport box)
-    // auto stage_move_to_goal = std::make_unique<mtc::stages::MoveTo>("move to goal", interpolation_planner);
-    // stage_move_to_goal->setGroup(arm_group);
-    // geometry_msgs::msg::PoseStamped goal_pose_stamped;
-    // goal_pose_stamped.pose = goal_pose_;
-    // goal_pose_stamped.header.frame_id = "world";
-    // stage_move_to_goal->setGoal(goal_pose_stamped);
-    // task.add(std::move(stage_move_to_goal));
+    // Stage: Move to goal pose (transport box)
+    auto stage_move_to_goal = std::make_unique<mtc::stages::MoveRelative>("move to goal", cartesian_planner);
+    stage_move_to_goal->properties().set("marker_ns", "move_to_goal");
+    stage_move_to_goal->setGroup(arm_group);
+    stage_move_to_goal->setIKFrame(ik_frame);
+    stage_move_to_goal->setMinMaxDistance(0.4, 0.5); // min, max distance
 
-    // // Stage 6: Place box (final placement)
-    // auto stage_place = std::make_unique<mtc::stages::MoveTo>("place box", interpolation_planner);
-    // stage_place->setGroup(arm_group);
-    // geometry_msgs::msg::PoseStamped place_pose_stamped;
-    // place_pose_stamped.pose = place_pose_;
-    // place_pose_stamped.header.frame_id = "world";
-    // stage_place->setGoal(place_pose_stamped);
-    // task.add(std::move(stage_place));
+    geometry_msgs::msg::Vector3Stamped vec2;
+    vec2.header.frame_id = "world";
+    vec2.vector.y = 1.0;
+    stage_move_to_goal->setDirection(vec2);
+    task.add(std::move(stage_move_to_goal));
+
+    // Stage: Place box (final placement)
+    auto stage_place = std::make_unique<mtc::stages::MoveTo>("place box", interpolation_planner);
+    stage_place->setGroup(arm_group);
+
+    geometry_msgs::msg::PoseStamped place_pose_stamped;
+    place_pose_stamped.pose = place_pose_;
+    place_pose_stamped.header.frame_id = "world";
+    stage_place->setGoal(place_pose_stamped);
+    stage_place->setIKFrame(ik_frame);
+    task.add(std::move(stage_place));
 
     return task;
 }
