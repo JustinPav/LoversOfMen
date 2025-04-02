@@ -3,7 +3,7 @@
 <package format="2">
   <name>mtc</name>
   <version>0.0.0</version>
-  <description>MTC package</description>
+  <description>mtc package</description>
   <maintainer email="user@example.com">Your Name</maintainer>
   <license>Apache-2.0</license>
 

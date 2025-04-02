@@ -12,8 +12,7 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
 {
     node_ = std::make_shared<rclcpp::Node>("mtc_task_node", options);
 
-    // Define pickup waypoints for placing collision objects (e.g., boxes)
-    // Here, we define three pickup locations.
+    // Define a default pickup location (can be overridden later with setBlockPoses)
     geometry_msgs::msg::Pose p1;
     p1.position.x = 0.4;
     p1.position.y = -0.2;
@@ -21,32 +20,60 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     p1.orientation.w = 1.0;
     block_locations_.push_back(p1);
 
-    // Define dummy poses for the task stages.
-    // Update these values to reflect your real task.
-    // current_box_pose_: approach pose above the box
+    // Set default task poses based on p1.
+    // current_box_pose_ is the approach pose above the block.
     tf2::Quaternion q;
     q.setRPY(0, M_PI, 0);
     current_box_pose_ = p1;
-    current_box_pose_.position.z += 0.1; // 0.1 m above the box
+    current_box_pose_.position.z += 0.1; // 0.1 m above the block
     current_box_pose_.orientation = tf2::toMsg(q);
 
-    // lifted_pose_: after lifting the box vertically by 0.15 m
+    // lifted_pose_: after lifting the block vertically by 0.15 m
     lifted_pose_ = current_box_pose_;
     lifted_pose_.position.z += 0.15;
 
-    // reorient_pose_: change orientation (for example, face downward)
+    // reorient_pose_: set to the lifted pose (adjust orientation if needed)
     reorient_pose_ = lifted_pose_;
+    // For example, you can set a new orientation if required:
     // tf2::Quaternion q2;
-    // q2.setRPY(M_PI / 2, 0, 0);
+    // q2.setRPY(M_PI/2, 0, 0);
     // reorient_pose_.orientation = tf2::toMsg(q2);
 
-    // goal_pose_: a pose that moves the box toward a placement area.
+    // goal_pose_: a pose that moves the block toward a placement area.
     goal_pose_ = reorient_pose_;
-    goal_pose_.position.y += 0.45; // shift in x
+    goal_pose_.position.y += 0.45; // shift in y
 
-    // place_pose_: final placement pose.
+    // place_pose_: final placement pose (assumed to be at table height, same z as current_box_pose_)
     place_pose_ = goal_pose_;
-    place_pose_.position.z = current_box_pose_.position.z; // assume table height
+    place_pose_.position.z = current_box_pose_.position.z;
+}
+
+// New function: setBlockPoses
+void MTCTaskNode::setBlockPoses(const geometry_msgs::msg::Pose &initial_pose, const geometry_msgs::msg::Pose &goal_pose)
+{
+    // Update block_locations_ (for collision objects) and task poses.
+    block_locations_.clear();
+    block_locations_.push_back(initial_pose);
+
+    // Set the current_box_pose_ to be an approach pose above the block.
+    tf2::Quaternion q;
+    q.setRPY(0, M_PI, 0);
+    current_box_pose_ = initial_pose;
+    current_box_pose_.position.z += 0.1; // e.g., 10 cm above the block
+    current_box_pose_.orientation = tf2::toMsg(q);
+
+    // For lifted_pose, add an additional offset.
+    lifted_pose_ = current_box_pose_;
+    lifted_pose_.position.z += 0.15;
+
+    // Reorient pose can be left as lifted_pose or modified.
+    reorient_pose_ = lifted_pose_;
+
+    // Set the goal and place poses using the provided goal_pose.
+    goal_pose_ = goal_pose;
+    // For place_pose, we assume table height is same as the block's z (or adjust as needed)
+    place_pose_ = goal_pose;
+    place_pose_.position.z = current_box_pose_.position.z;
 }
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr MTCTaskNode::getNodeBaseInterface()
@@ -92,8 +119,6 @@ void MTCTaskNode::setupPlanningScene()
 
 void MTCTaskNode::doTask()
 {
-    // Wait for user input before proceeding.
-
     task_ = createTask();
 
     try
@@ -143,7 +168,7 @@ mtc::Task MTCTaskNode::createTask()
     task.setProperty("eef", eef_group);
     task.setProperty("ik_frame", ik_frame);
 
-// Stage 1: Current state
+    // Stage 1: Current state
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     mtc::Stage *current_state_ptr = nullptr; // Forward current_state on to grasp pose generator
@@ -156,16 +181,14 @@ mtc::Task MTCTaskNode::createTask()
     // Create planners for the stages (using Pipeline or JointInterpolation planners)
     auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_);
     auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
-
     auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
     cartesian_planner->setMaxVelocityScalingFactor(1.0);
     cartesian_planner->setMaxAccelerationScalingFactor(1.0);
-    cartesian_planner->setStepSize(.005);
+    cartesian_planner->setStepSize(0.005);
 
-    // Stage: Move to a specific joint configuration allowing for a consistent start point
+    // Stage: Move to a specific joint configuration (starting configuration)
     auto move_to_start = std::make_unique<mtc::stages::MoveTo>("starting configuration", interpolation_planner);
     move_to_start->setGroup(arm_group);
-    // Define target joint values (in radians)
     std::map<std::string, double> joint_targets;
     joint_targets["shoulder_pan_joint"] = 0.0;
     joint_targets["shoulder_lift_joint"] = -M_PI / 3; // -60 deg
@@ -173,15 +196,12 @@ mtc::Task MTCTaskNode::createTask()
     joint_targets["wrist_1_joint"] = -M_PI / 2;       // -90 deg
     joint_targets["wrist_2_joint"] = -M_PI / 2;       // -90 deg
     joint_targets["wrist_3_joint"] = 0.0;
-
     move_to_start->setGoal(joint_targets);
-    // Add stage to task
     task.add(std::move(move_to_start));
 
-    // Stage: Move to box (approach above the box)
+    // Stage: Move to block (approach above the block)
     auto stage_move_to_box = std::make_unique<mtc::stages::MoveTo>("move to box", interpolation_planner);
     stage_move_to_box->setGroup(arm_group);
-
     geometry_msgs::msg::PoseStamped current_box_pose_stamped;
     current_box_pose_stamped.pose = current_box_pose_;
     current_box_pose_stamped.header.frame_id = "world";
@@ -195,7 +215,6 @@ mtc::Task MTCTaskNode::createTask()
     stage_lift->setGroup(arm_group);
     stage_lift->setIKFrame(ik_frame);
     stage_lift->setMinMaxDistance(0.05, 0.15); // min, max distance
-
     geometry_msgs::msg::Vector3Stamped vec;
     vec.header.frame_id = "world";
     vec.vector.z = 1.0;
@@ -205,7 +224,6 @@ mtc::Task MTCTaskNode::createTask()
     // Stage: Re-orient box (change the end effector orientation)
     auto stage_reorient = std::make_unique<mtc::stages::MoveTo>("reorient box", interpolation_planner);
     stage_reorient->setGroup(arm_group);
-
     geometry_msgs::msg::PoseStamped reorient_pose_stamped;
     reorient_pose_stamped.pose = reorient_pose_;
     reorient_pose_stamped.header.frame_id = "world";
@@ -219,7 +237,6 @@ mtc::Task MTCTaskNode::createTask()
     stage_move_to_goal->setGroup(arm_group);
     stage_move_to_goal->setIKFrame(ik_frame);
     stage_move_to_goal->setMinMaxDistance(0.4, 0.5); // min, max distance
-
     geometry_msgs::msg::Vector3Stamped vec2;
     vec2.header.frame_id = "world";
     vec2.vector.y = 1.0;
@@ -229,7 +246,6 @@ mtc::Task MTCTaskNode::createTask()
     // Stage: Place box (final placement)
     auto stage_place = std::make_unique<mtc::stages::MoveTo>("place box", interpolation_planner);
     stage_place->setGroup(arm_group);
-
     geometry_msgs::msg::PoseStamped place_pose_stamped;
     place_pose_stamped.pose = place_pose_;
     place_pose_stamped.header.frame_id = "world";

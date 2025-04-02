@@ -20,7 +20,7 @@ def generate_launch_description():
     }
 
     mtc_task = Node(
-        package="MTC",
+        package="mtc",
         executable="main",
         output="screen",
         parameters=[
