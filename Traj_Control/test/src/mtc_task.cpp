@@ -116,8 +116,6 @@ void MTCTaskNode::doTask()
     // Publish the first solution for introspection (if desired)
     task_.introspection().publishSolution(*task_.solutions().front());
 
-    std::cout << "Press Enter to continue with the task..." << std::endl;
-    std::cin.get();
     // Execute the task using the first solution
     auto result = task_.execute(*task_.solutions().front());
     if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
