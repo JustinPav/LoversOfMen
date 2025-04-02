@@ -1,6 +1,7 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
+from launch.actions import ExecuteProcess
 from ament_index_python.packages import get_package_share_directory
 import os
 
@@ -14,17 +15,22 @@ def generate_launch_description():
     moveit_config = moveit_config.to_moveit_configs()
 
     move_group_capabilities = {
-        "capabilities": "move_group/ExecuteTaskSolutionCapability"
+        "capabilities": "move_group/ExecuteTaskSolutionCapability",
+        "allow_trajectory_execution": True,
     }
 
-    return LaunchDescription([
-        Node(
-            package="test",
-            executable="mtc_main",
-            output="screen",
-            parameters=[
-                moveit_config.to_dict(),
-                move_group_capabilities
-            ]
-        )
-    ])
+    mtc_task = Node(
+        package="test",
+        executable="mtc_main",
+        output="screen",
+        parameters=[
+            moveit_config.to_dict(),
+            move_group_capabilities
+        ]
+    )
+ 
+    return LaunchDescription(\
+        [
+        mtc_task,
+        ]
+    )
