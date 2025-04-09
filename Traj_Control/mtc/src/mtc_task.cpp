@@ -59,12 +59,12 @@ void MTCTaskNode::setBlockPoses(const geometry_msgs::msg::Pose &initial_pose, co
     tf2::Quaternion q;
     q.setRPY(0, M_PI, 0);
     current_box_pose_ = initial_pose;
-    current_box_pose_.position.z += 0.1; // e.g., 10 cm above the block
+    current_box_pose_.position.z += 0.24; // e.g., 240 mm above the block
     current_box_pose_.orientation = tf2::toMsg(q);
 
     // For lifted_pose, add an additional offset.
     lifted_pose_ = current_box_pose_;
-    lifted_pose_.position.z += 0.15;
+    lifted_pose_.position.z += 0.1;
 
     // Reorient pose can be left as lifted_pose or modified.
     reorient_pose_ = lifted_pose_;
@@ -127,7 +127,7 @@ void MTCTaskNode::doTask()
     }
     catch (mtc::InitStageException &e)
     {
-        RCLCPP_ERROR(node_->get_logger(), "Task initialization failed: %s", e.what());
+        RCLCPP_ERROR_STREAM(node_->get_logger(), "Task initialization failed: " << e);
         return;
     }
 
@@ -180,6 +180,7 @@ mtc::Task MTCTaskNode::createTask()
 
     // Create planners for the stages (using Pipeline or JointInterpolation planners)
     auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_);
+    sampling_planner->init(task.getRobotModel());
     auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
     auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
     cartesian_planner->setMaxVelocityScalingFactor(1.0);
@@ -187,6 +188,7 @@ mtc::Task MTCTaskNode::createTask()
     cartesian_planner->setStepSize(0.005);
 
     // Stage: Move to a specific joint configuration (starting configuration)
+    mtc::Stage *move_to_start_ptr = nullptr; // Forward move_to_start on to place pose generator
     auto move_to_start = std::make_unique<mtc::stages::MoveTo>("starting configuration", interpolation_planner);
     move_to_start->setGroup(arm_group);
     std::map<std::string, double> joint_targets;
@@ -197,29 +199,98 @@ mtc::Task MTCTaskNode::createTask()
     joint_targets["wrist_2_joint"] = -M_PI / 2;       // -90 deg
     joint_targets["wrist_3_joint"] = 0.0;
     move_to_start->setGoal(joint_targets);
+    move_to_start_ptr = move_to_start.get();
     task.add(std::move(move_to_start));
 
-    // Stage: Move to block (approach above the block)
-    auto stage_move_to_box = std::make_unique<mtc::stages::MoveTo>("move to box", interpolation_planner);
-    stage_move_to_box->setGroup(arm_group);
-    geometry_msgs::msg::PoseStamped current_box_pose_stamped;
-    current_box_pose_stamped.pose = current_box_pose_;
-    current_box_pose_stamped.header.frame_id = "world";
-    stage_move_to_box->setGoal(current_box_pose_stamped);
-    stage_move_to_box->setIKFrame(ik_frame);
-    task.add(std::move(stage_move_to_box));
+    // Stage: Move to block (approach the block)
+    auto stage_move_to_pick = std::make_unique<mtc::stages::Connect>(
+        "move to pick",
+        mtc::stages::Connect::GroupPlannerVector{{arm_group, sampling_planner}});
+    // clang-format on
+    stage_move_to_pick->setTimeout(5.0);
+    stage_move_to_pick->properties().configureInitFrom(mtc::Stage::PARENT);
+    task.add(std::move(stage_move_to_pick));
 
-    // Stage: Lift box (move upward relatively)
-    auto stage_lift = std::make_unique<mtc::stages::MoveRelative>("lift box", cartesian_planner);
-    stage_lift->properties().set("marker_ns", "lift_box");
-    stage_lift->setGroup(arm_group);
-    stage_lift->setIKFrame(ik_frame);
-    stage_lift->setMinMaxDistance(0.05, 0.15); // min, max distance
-    geometry_msgs::msg::Vector3Stamped vec;
-    vec.header.frame_id = "world";
-    vec.vector.z = 1.0;
-    stage_lift->setDirection(vec);
-    task.add(std::move(stage_lift));
+    mtc::Stage *attach_object_stage = nullptr; // Forward attach_object_stage to place pose generator
+
+    {
+        auto grasp = std::make_unique<mtc::SerialContainer>("pick object");
+        task.properties().exposeTo(grasp->properties(), {"eef", "group", "ik_frame"});
+        // clang-format off
+        grasp->properties().configureInitFrom(mtc::Stage::PARENT,
+                                              { "eef", "group", "ik_frame" });
+        // clang-format on
+
+        {
+            auto stage =
+                std::make_unique<mtc::stages::MoveRelative>("approach object", cartesian_planner);
+            // clang-format on
+            stage->properties().set("marker_ns", "approach_object");
+            stage->properties().set("link", ik_frame);
+            stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
+            stage->setMinMaxDistance(0.1, 0.15);
+
+            // Set hand forward direction
+            geometry_msgs::msg::Vector3Stamped vec;
+            vec.header.frame_id = ik_frame;
+            vec.vector.z = 1.0;
+            stage->setDirection(vec);
+            grasp->insert(std::move(stage));
+        }
+
+        {
+            // Sample grasp pose
+            auto stage = std::make_unique<mtc::stages::GenerateGraspPose>("generate grasp pose");
+            stage->properties().configureInitFrom(mtc::Stage::PARENT);
+            stage->properties().set("marker_ns", "grasp_pose");
+            stage->setPreGraspPose("open");
+            stage->setObject("cube_0");
+            stage->setAngleDelta(M_PI / 2);
+            stage->setMonitoredStage(move_to_start_ptr); // Hook into starting state
+
+            // This is the transform from the object frame to the end-effector frame
+            Eigen::Isometry3d grasp_frame_transform;
+            Eigen::Quaterniond q = Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitX()) *
+                                   Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitY()) *
+                                   Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitZ());
+            grasp_frame_transform.linear() = q.matrix();
+            grasp_frame_transform.translation().z() = 0.24;
+
+            // Compute IK
+            // clang-format off
+            auto wrapper =
+                std::make_unique<mtc::stages::ComputeIK>("grasp pose IK", std::move(stage));
+            // clang-format on
+            wrapper->setMaxIKSolutions(8);
+            wrapper->setMinSolutionDistance(1.0);
+            wrapper->setIKFrame(grasp_frame_transform, ik_frame);
+            wrapper->properties().configureInitFrom(mtc::Stage::PARENT, {"eef", "group"});
+            wrapper->properties().configureInitFrom(mtc::Stage::INTERFACE, {"target_pose"});
+            grasp->insert(std::move(wrapper));
+        }
+
+        {
+            auto stage = std::make_unique<mtc::stages::ModifyPlanningScene>("attach object");
+            stage->attachObject("object", ik_frame);
+            attach_object_stage = stage.get();
+            grasp->insert(std::move(stage));
+        }
+        {
+            auto stage = std::make_unique<mtc::stages::MoveRelative>("lift object", cartesian_planner);
+            stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
+            stage->setMinMaxDistance(0.1, 0.3);
+            stage->setIKFrame(ik_frame);
+            stage->properties().set("marker_ns", "lift_object");
+
+            // Set upward direction
+            geometry_msgs::msg::Vector3Stamped vec;
+            vec.header.frame_id = "world";
+            vec.vector.z = 1.0;
+            stage->setDirection(vec);
+            grasp->insert(std::move(stage));
+        }
+        task.add(std::move(grasp));
+    }
 
     // Stage: Re-orient box (change the end effector orientation)
     auto stage_reorient = std::make_unique<mtc::stages::MoveTo>("reorient box", interpolation_planner);
@@ -252,6 +323,12 @@ mtc::Task MTCTaskNode::createTask()
     stage_place->setGoal(place_pose_stamped);
     stage_place->setIKFrame(ik_frame);
     task.add(std::move(stage_place));
+
+    // Stage: return to starting configuration
+    auto return_to_start = std::make_unique<mtc::stages::MoveTo>("starting configuration", interpolation_planner);
+    return_to_start->setGroup(arm_group);
+    return_to_start->setGoal(joint_targets);
+    task.add(std::move(return_to_start));
 
     return task;
 }

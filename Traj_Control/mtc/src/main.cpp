@@ -14,15 +14,15 @@ int main(int argc, char **argv)
   // Example: set new block poses via the setBlockPoses method.
   // These can be read from user input, a file, or another source.
   geometry_msgs::msg::Pose initial_pose;
-  initial_pose.position.x = 0.4;
+  initial_pose.position.x = 0.35;
   initial_pose.position.y = -0.2;
   initial_pose.position.z = 0.05;
   initial_pose.orientation.w = 1.0;
 
   geometry_msgs::msg::Pose goal_pose;
   tf2::Quaternion q;
-  q.setRPY(-M_PI / 2, 0, 0); // Rotate 90 degrees around the Z-axis
-  goal_pose.position.x = 0.4;
+  q.setRPY(0, M_PI, 0); // Rotate 90 degrees around the Z-axis
+  goal_pose.position.x = 0.35;
   goal_pose.position.y = 0.25;
   goal_pose.position.z = 0.05;
   goal_pose.orientation = tf2::toMsg(q);
