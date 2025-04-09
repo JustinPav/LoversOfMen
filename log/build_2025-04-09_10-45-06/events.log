@@ -1,0 +1,65 @@
+[0.000000] (-) TimerEvent: {}
+[0.000366] (-) JobUnselected: {'identifier': 'mtc'}
+[0.000632] (-) JobUnselected: {'identifier': 'test'}
+[0.000660] (perception) JobQueued: {'identifier': 'perception', 'dependencies': OrderedDict()}
+[0.000685] (perception) JobStarted: {'identifier': 'perception'}
+[0.007008] (perception) JobProgress: {'identifier': 'perception', 'progress': 'cmake'}
+[0.007427] (perception) Command: {'cmd': ['/usr/bin/cmake', '/home/anton/git/LoversOfMen/Perception', '-DCMAKE_INSTALL_PREFIX=/home/anton/git/LoversOfMen/install/perception'], 'cwd': '/home/anton/git/LoversOfMen/build/perception', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'en_AU:en'), ('USER', 'anton'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/anton'), ('OLDPWD', '/home/anton/git/LoversOfMen'), ('DESKTOP_SESSION', 'ubuntu'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('SYSTEMD_EXEC_PID', '1129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('COLCON_PREFIX_PATH', '/home/anton/git/LoversOfMen/install:/home/anton/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'anton'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'anton'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '1'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/anton-Surface-Laptop-3:@/tmp/.ICE-unix/1097,unix/anton-Surface-Laptop-3:/tmp/.ICE-unix/1097'), ('XDG_MENU_PREFIX', 'gnome-'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/2df3fb58_0656_4933_84c1_5509c5fab448'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'en_AU.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.V5F242'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('GNOME_TERMINAL_SERVICE', ':1.160'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo-11/'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/anton/git/LoversOfMen/build/perception'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('VTE_VERSION', '6800')]), 'shell': False}
+[0.099560] (-) TimerEvent: {}
+[0.127288] (perception) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.199659] (-) TimerEvent: {}
+[0.207263] (perception) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.218890] (perception) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.289784] (perception) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.298558] (perception) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.299083] (perception) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.299715] (-) TimerEvent: {}
+[0.299831] (perception) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.304300] (perception) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.371700] (perception) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.378652] (perception) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.378932] (perception) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.379326] (perception) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.381834] (perception) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.399846] (-) TimerEvent: {}
+[0.500204] (-) TimerEvent: {}
+[0.515880] (perception) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.597612] (perception) StdoutLine: {'line': b'-- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.600302] (-) TimerEvent: {}
+[0.632960] (perception) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.636739] (perception) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.643704] (perception) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.653762] (perception) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.667847] (perception) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.700436] (-) TimerEvent: {}
+[0.703996] (perception) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.705872] (perception) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.778182] (perception) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.800533] (-) TimerEvent: {}
+[0.801386] (perception) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.836900] (perception) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.845133] (perception) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[0.900637] (-) TimerEvent: {}
+[0.910919] (perception) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[0.911308] (perception) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[0.973408] (perception) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[0.974375] (perception) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[1.000732] (-) TimerEvent: {}
+[1.078046] (perception) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.079774] (perception) StderrLine: {'line': b'\x1b[31mCMake Error at CMakeLists.txt:13 (add_executable):\n'}
+[1.079920] (perception) StderrLine: {'line': b'  Cannot find source file:\n'}
+[1.080003] (perception) StderrLine: {'line': b'\n'}
+[1.080078] (perception) StderrLine: {'line': b'    src/findBlockCoordinates.cpp\n'}
+[1.080152] (perception) StderrLine: {'line': b'\n'}
+[1.080225] (perception) StderrLine: {'line': b'  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm .h\n'}
+[1.080300] (perception) StderrLine: {'line': b'  .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90 .f95 .f03 .hip .ispc\n'}
+[1.080378] (perception) StderrLine: {'line': b'\n'}
+[1.080548] (perception) StderrLine: {'line': b'\x1b[0m\n'}
+[1.080631] (perception) StderrLine: {'line': b'\x1b[31mCMake Error at CMakeLists.txt:13 (add_executable):\n'}
+[1.080732] (perception) StderrLine: {'line': b'  No SOURCES given to target: find_block_coordinates\n'}
+[1.080820] (perception) StderrLine: {'line': b'\n'}
+[1.080918] (perception) StderrLine: {'line': b'\x1b[0m\n'}
+[1.080991] (perception) StderrLine: {'line': b'\x1b[0mCMake Generate step failed.  Build files cannot be regenerated correctly.\x1b[0m\n'}
+[1.087955] (perception) CommandEnded: {'returncode': 1}
+[1.088652] (perception) JobEnded: {'identifier': 'perception', 'rc': 1}
+[1.099401] (-) EventReactorShutdown: {}

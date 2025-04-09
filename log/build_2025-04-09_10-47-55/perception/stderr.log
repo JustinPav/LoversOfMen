@@ -1,0 +1,4 @@
+[31mCMake Error at CMakeLists.txt:17 (install):
+  install TARGETS given target "find_block_coordinates" which does not exist.
+
+[0m
