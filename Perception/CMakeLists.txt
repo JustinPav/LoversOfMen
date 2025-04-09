@@ -1,23 +1,39 @@
 cmake_minimum_required(VERSION 3.5)
 project(perception)
 
-# Use C++17 (or whatever you need)
+# C++ version
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
-# Find ROS 2 packages
+# Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(OpenCV REQUIRED)
 
-# Add your node
+# Executable
 add_executable(find_block_coordinate src/findBlockCoordinate.cpp)
-ament_target_dependencies(find_block_coordinate rclcpp)
 
-# Install
+# Link dependencies
+ament_target_dependencies(find_block_coordinate
+  rclcpp
+  sensor_msgs
+  cv_bridge
+)
+
+target_include_directories(find_block_coordinate PRIVATE
+  ${OpenCV_INCLUDE_DIRS}
+)
+
+target_link_libraries(find_block_coordinate
+  ${OpenCV_LIBRARIES}
+)
+
+# Install target
 install(TARGETS
   find_block_coordinate
   DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()
-

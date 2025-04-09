@@ -2,15 +2,22 @@
 <package format="3">
   <name>perception</name>
   <version>0.1.0</version>
-  <description>Perception module</description>
-  <maintainer email="you@example.com">Your Name</maintainer>
+  <description>ROS 2 package for detecting dominant colors in camera image feed</description>
+
+  <maintainer email="anton.n.cecire@student.uts.edu.au">Anton</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+
   <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>opencv</depend>
+
+  <exec_depend>opencv</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
   </export>
 </package>
-
