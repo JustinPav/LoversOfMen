@@ -13,26 +13,26 @@ find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 
 # Executable
-add_executable(find_block_coordinate src/findBlockCoordinate.cpp)
+add_executable(find_block_coordinates src/findBlockCoordinates.cpp)
 
 # Link dependencies
-ament_target_dependencies(find_block_coordinate
+ament_target_dependencies(find_block_coordinates
   rclcpp
   sensor_msgs
   cv_bridge
 )
 
-target_include_directories(find_block_coordinate PRIVATE
+target_include_directories(find_block_coordinates PRIVATE
   ${OpenCV_INCLUDE_DIRS}
 )
 
-target_link_libraries(find_block_coordinate
+target_link_libraries(find_block_coordinates
   ${OpenCV_LIBRARIES}
 )
 
 # Install target
 install(TARGETS
-  find_block_coordinate
+  find_block_coordinates
   DESTINATION lib/${PROJECT_NAME}
 )
 

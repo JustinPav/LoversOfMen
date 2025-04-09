@@ -1,4 +1,0 @@
-[0.000000] (-) TimerEvent: {}
-[0.000330] (-) JobUnselected: {'identifier': 'mtc'}
-[0.000361] (-) JobUnselected: {'identifier': 'test'}
-[0.000516] (-) EventReactorShutdown: {}

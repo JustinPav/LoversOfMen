@@ -1,0 +1,6 @@
+Invoking command in '/home/anton/git/LoversOfMen/build/perception': /usr/bin/cmake /home/anton/git/LoversOfMen/Perception -DCMAKE_INSTALL_PREFIX=/home/anton/git/LoversOfMen/install/perception
+Invoked command in '/home/anton/git/LoversOfMen/build/perception' returned '0': /usr/bin/cmake /home/anton/git/LoversOfMen/Perception -DCMAKE_INSTALL_PREFIX=/home/anton/git/LoversOfMen/install/perception
+Invoking command in '/home/anton/git/LoversOfMen/build/perception': /usr/bin/cmake --build /home/anton/git/LoversOfMen/build/perception -- -j8 -l8
+Invoked command in '/home/anton/git/LoversOfMen/build/perception' returned '0': /usr/bin/cmake --build /home/anton/git/LoversOfMen/build/perception -- -j8 -l8
+Invoking command in '/home/anton/git/LoversOfMen/build/perception': /usr/bin/cmake --install /home/anton/git/LoversOfMen/build/perception
+Invoked command in '/home/anton/git/LoversOfMen/build/perception' returned '0': /usr/bin/cmake --install /home/anton/git/LoversOfMen/build/perception

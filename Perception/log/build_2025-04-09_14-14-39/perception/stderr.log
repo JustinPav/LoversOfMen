@@ -1,7 +1,0 @@
-[01m[K/home/anton/git/LoversOfMen/Perception/src/findBlockCoordinate.cpp:2:10:[m[K [01;31m[Kfatal error: [m[Ksensor_msgs/msg/image.hpp: No such file or directory
-    2 | #include [01;31m[K<sensor_msgs/msg/image.hpp>[m[K
-      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
-compilation terminated.
-gmake[2]: *** [CMakeFiles/find_block_coordinate.dir/build.make:76: CMakeFiles/find_block_coordinate.dir/src/findBlockCoordinate.cpp.o] Error 1
-gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/find_block_coordinate.dir/all] Error 2
-gmake: *** [Makefile:146: all] Error 2
