@@ -13,8 +13,9 @@ def generate_launch_description():
     )
     rvizconfig_file = PathJoinSubstitution([description_package, "rviz", "urdf.rviz"])
 
+    ur_type = "ur3e"
     robot_description = ParameterValue(
-        Command(["xacro ", description_file, " ", "ur_type:=", "ur5e", " ", "onrobot_type:=", "rg2", " ", "prefix:=", "ur5e_"]), value_type=str
+        Command(["xacro ", description_file, " ", "ur_type:=", ur_type, " ", "onrobot_type:=", "rg2", " ", "prefix:=", ur_type, "_"]), value_type=str
     )
 
     robot_state_publisher_node = Node(
