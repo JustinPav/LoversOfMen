@@ -533,4 +533,111 @@
     <parent link="flange"/>
     <child link="tool0"/>
   </joint>
+  
+  <!-- ======================= RG2 Gripper Attachment ======================= -->
+  <!-- onrobot_description package must be in your ROS2_PACKAGE_PATH -->
+  <!-- Base link of RG2 -->
+  <link name="onrobot_base_link"/>
+
+  <!-- Fixed joint: mount RG2 base to tool0 -->
+  <joint name="tool0-to-onrobot_base_link" type="fixed">
+    <parent link="tool0"/>
+    <child link="onrobot_base_link"/>
+    <!-- adjust xyz/rpy to position the gripper correctly -->
+    <origin xyz="0 0 0.218" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Finger width (prismatic) -->
+  <link name="onrobot_finger_width_mock_link"/>
+  <joint name="onrobot_finger_width" type="prismatic">
+    <parent link="onrobot_base_link"/>
+    <child link="onrobot_finger_width_mock_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis    xyz="0 0 1"/>
+    <limit lower="0" upper="0.110" velocity="0.127" effort="40"/>
+  </joint>
+
+  <!-- Finger joint (revolute) -->
+  <joint name="onrobot_finger_joint" type="revolute">
+    <parent link="onrobot_base_link"/>
+    <child  link="onrobot_left_outer_knuckle"/>
+    <origin xyz="0 -0.017178 0.125797" rpy="0 0 0"/>
+    <axis   xyz="-1 0 0"/>
+    <limit  lower="-0.558505" upper="0.785398" velocity="100" effort="1000"/>
+    <mimic  joint="onrobot_finger_width" multiplier="‑3.8343" offset="0.785398"/>
+  </joint>
+
+  <!-- Left finger chain -->
+  <link name="onrobot_left_outer_knuckle"/>
+  <joint name="onrobot_left_inner_knuckle_joint" type="revolute">
+    <parent link="onrobot_left_outer_knuckle"/>
+    <child  link="onrobot_left_inner_knuckle"/>
+    <origin xyz="0 -0.007678 0.142297" rpy="0 0 0"/>
+    <axis   xyz="1 0 0"/>
+    <limit  lower="-0.785398" upper="0.785398" velocity="100" effort="1000"/>
+    <mimic  joint="onrobot_finger_joint" multiplier="-1"/>
+  </joint>
+  <link name="onrobot_left_inner_knuckle"/>
+  <joint name="onrobot_left_inner_finger_joint" type="revolute">
+    <parent link="onrobot_left_outer_knuckle"/>
+    <child  link="onrobot_left_inner_finger"/>
+    <origin xyz="0 -0.039592 0.038177" rpy="0 0 0"/>
+    <axis   xyz="1 0 0"/>
+    <limit  lower="-0.872665" upper="0.872665" velocity="100" effort="1000"/>
+    <mimic  joint="onrobot_finger_joint" multiplier="1"/>
+  </joint>
+  <link name="onrobot_left_inner_finger"/>
+  <link name="onrobot_left_finger_tip"/>
+  <joint name="onrobot_left_finger_tip_joint" type="fixed">
+    <parent link="onrobot_left_inner_finger"/>
+    <child  link="onrobot_left_finger_tip"/>
+    <origin xyz="0 0.019 0.038" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Right finger chain (mirror of left) -->
+  <link name="onrobot_right_outer_knuckle"/>
+  <joint name="onrobot_right_outer_knuckle_joint" type="revolute">
+    <parent link="onrobot_base_link"/>
+    <child  link="onrobot_right_outer_knuckle"/>
+    <origin xyz="0 0.017178 0.125797" rpy="0 0 3.14159265359"/>
+    <axis   xyz="1 0 0"/>
+    <limit  lower="-0.785398" upper="0.785398" velocity="100" effort="1000"/>
+    <mimic  joint="onrobot_finger_joint" multiplier="-1"/>
+  </joint>
+  <link name="onrobot_right_inner_knuckle"/>
+  <joint name="onrobot_right_inner_knuckle_joint" type="revolute">
+    <parent link="onrobot_right_outer_knuckle"/>
+    <child  link="onrobot_right_inner_knuckle"/>
+    <origin xyz="0 0.007678 0.142297" rpy="0 0 0"/>
+    <axis   xyz="1 0 0"/>
+    <limit  lower="-0.785398" upper="0.785398" velocity="100" effort="1000"/>
+    <mimic  joint="onrobot_finger_joint" multiplier="-1"/>
+  </joint>
+  <link name="onrobot_right_inner_knuckle"/>
+  <joint name="onrobot_right_inner_finger_joint" type="revolute">
+    <parent link="onrobot_right_outer_knuckle"/>
+    <child  link="onrobot_right_inner_finger"/>
+    <origin xyz="0 0.039592 0.038177" rpy="0 0 0"/>
+    <axis   xyz="1 0 0"/>
+    <limit  lower="-0.872665" upper="0.872665" velocity="100" effort="1000"/>
+    <mimic  joint="onrobot_finger_joint" multiplier="1"/>
+  </joint>
+  <link name="onrobot_right_inner_finger"/>
+  <link name="onrobot_right_finger_tip"/>
+  <joint name="onrobot_right_finger_tip_joint" type="fixed">
+    <parent link="onrobot_right_inner_finger"/>
+    <child  link="onrobot_right_finger_tip"/>
+    <origin xyz="0 -0.019 0.038" rpy="0 0 0"/>
+  </joint>
+
+  <!-- TCP link for RG2 -->
+  <link name="onrobot_gripper_tcp"/>
+  <joint name="onrobot_tcp_joint" type="fixed">
+    <parent link="onrobot_base_link"/>
+    <child  link="onrobot_gripper_tcp"/>
+    <!-- offset from base_link to tcp -->
+    <origin xyz="0 0 0.218" rpy="0 0 0"/>
+  </joint>
+
 </robot>
+
