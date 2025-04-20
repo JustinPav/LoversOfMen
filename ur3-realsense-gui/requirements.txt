@@ -1,0 +1,6 @@
+Flask==2.0.1
+opencv-python==4.5.3.20210927
+pyrealsense2==2.50.0
+tkinter==0.1.0
+numpy==1.21.2
+matplotlib==3.4.3
