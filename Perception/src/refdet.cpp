@@ -1,102 +1,100 @@
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/features2d.hpp>
-#include <opencv2/calib3d.hpp>
-#include <opencv2/videoio.hpp>
-#include <iostream>
-#include <vector>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/image.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/opencv.hpp>
 
-int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <ref_image_path> [camera_index]\n";
-        return -1;
-    }
-    std::string refPath = argv[1];
-    int camIndex = 0;
-    if (argc >= 3) camIndex = std::stoi(argv[2]);
+class ObjectDetectionNode : public rclcpp::Node {
+public:
+  ObjectDetectionNode()
+  : Node("object_detection_node") {
+    // Declare and get reference image parameter
+    this->declare_parameter<std::string>("ref_image_path", "");
+    ref_path_ = this->get_parameter("ref_image_path").as_string();
 
     // Load and preprocess reference image
-    cv::Mat refImg = cv::imread(refPath, cv::IMREAD_COLOR);
-    if (refImg.empty()) {
-        std::cerr << "Error: could not load reference image from " << refPath << std::endl;
-        return -1;
+    cv::Mat ref = cv::imread(ref_path_, cv::IMREAD_GRAYSCALE);
+    if (ref.empty()) {
+      RCLCPP_FATAL(this->get_logger(), "Cannot load reference image: %s", ref_path_.c_str());
+      rclcpp::shutdown();
+      return;
     }
-    cv::Mat refGray;
-    cv::cvtColor(refImg, refGray, cv::COLOR_BGR2GRAY);
-
-    // Initialize ORB detector and BFMatcher
-    cv::Ptr<cv::ORB> orb = cv::ORB::create(1000);
-    std::vector<cv::KeyPoint> kpRef;
-    cv::Mat desRef;
-    orb->detectAndCompute(refGray, cv::noArray(), kpRef, desRef);
-    cv::BFMatcher matcher(cv::NORM_HAMMING);
-
-    // Open camera
-    cv::VideoCapture cap(camIndex);
-    if (!cap.isOpened()) {
-        std::cerr << "Error: could not open camera index " << camIndex << std::endl;
-        return -1;
-    }
-
-    // Reference image corner points
-    std::vector<cv::Point2f> refCorners = {
-        cv::Point2f(0, 0),
-        cv::Point2f((float)refGray.cols, 0),
-        cv::Point2f((float)refGray.cols, (float)refGray.rows),
-        cv::Point2f(0, (float)refGray.rows)
+    orb_ = cv::ORB::create(1000);
+    orb_->detectAndCompute(ref, cv::noArray(), kp_ref_, des_ref_);
+    ref_corners_ = std::vector<cv::Point2f>{
+      {0, 0},
+      {static_cast<float>(ref.cols), 0},
+      {static_cast<float>(ref.cols), static_cast<float>(ref.rows)},
+      {0, static_cast<float>(ref.rows)}
     };
 
-    while (true) {
-        cv::Mat frame, gray;
-        if (!cap.read(frame)) break;
-        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    // Subscribe to color image topic
+    subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
+      "/camera/color/image_raw",
+      rclcpp::SensorDataQoS(),
+      std::bind(&ObjectDetectionNode::imageCallback, this, std::placeholders::_1)
+    );
+  }
 
-        // Detect and compute features in frame
-        std::vector<cv::KeyPoint> kpFrame;
-        cv::Mat desFrame;
-        orb->detectAndCompute(gray, cv::noArray(), kpFrame, desFrame);
+private:
+  void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr& msg) {
+    // Convert ROS image to OpenCV
+    cv::Mat frame = cv_bridge::toCvCopy(msg, "bgr8")->image;
+    cv::Mat gray;
+    cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
-        if (!desFrame.empty() && kpFrame.size() >= 10) {
-            // KNN match and ratio test
-            std::vector<std::vector<cv::DMatch>> knnMatches;
-            matcher.knnMatch(desRef, desFrame, knnMatches, 2);
-            std::vector<cv::DMatch> goodMatches;
-            for (auto& m : knnMatches) {
-                if (m.size() == 2 && m[0].distance < 0.75f * m[1].distance) {
-                    goodMatches.push_back(m[0]);
-                }
-            }
+    // Detect features in frame
+    std::vector<cv::KeyPoint> kp_frame;
+    cv::Mat des_frame;
+    orb_->detectAndCompute(gray, cv::noArray(), kp_frame, des_frame);
 
-            // Homography if enough matches
-            if (goodMatches.size() > 15) {
-                std::vector<cv::Point2f> ptsRef, ptsFrame;
-                for (auto& m : goodMatches) {
-                    ptsRef.push_back(kpRef[m.queryIdx].pt);
-                    ptsFrame.push_back(kpFrame[m.trainIdx].pt);
-                }
-                cv::Mat mask;
-                cv::Mat H = cv::findHomography(ptsRef, ptsFrame, cv::RANSAC, 5.0, mask);
-                if (!H.empty()) {
-                    // Project and draw polygon
-                    std::vector<cv::Point2f> dstCorners;
-                    cv::perspectiveTransform(refCorners, dstCorners, H);
-                    std::vector<cv::Point> dstCornersInt;
-                    for (auto& p : dstCorners) {
-                        dstCornersInt.emplace_back(cv::Point(std::round(p.x), std::round(p.y)));
-                    }
-                    cv::polylines(frame, dstCornersInt, true, cv::Scalar(0, 255, 0), 3);
-                }
-            }
+    if (!des_frame.empty() && kp_frame.size() >= 10) {
+      // KNN match and ratio test
+      std::vector<std::vector<cv::DMatch>> knn_matches;
+      bf_.knnMatch(des_ref_, des_frame, knn_matches, 2);
+      std::vector<cv::DMatch> good_matches;
+      for (const auto& m : knn_matches) {
+        if (m.size() == 2 && m[0].distance < 0.75f * m[1].distance) {
+          good_matches.push_back(m[0]);
         }
+      }
 
-        // Display
-        cv::imshow("Object Detection", frame);
-        char key = (char)cv::waitKey(1);
-        if (key == 'q' || key == 27) break;
+      // If enough good matches, compute homography
+      if (good_matches.size() > 15) {
+        std::vector<cv::Point2f> src_pts, dst_pts;
+        for (const auto& match : good_matches) {
+          src_pts.push_back(kp_ref_[match.queryIdx].pt);
+          dst_pts.push_back(kp_frame[match.trainIdx].pt);
+        }
+        cv::Mat H = cv::findHomography(src_pts, dst_pts, cv::RANSAC, 5.0);
+        if (!H.empty()) {
+          std::vector<cv::Point2f> dst_corners;
+          cv::perspectiveTransform(ref_corners_, dst_corners, H);
+          std::vector<cv::Point> polygon;
+          for (const auto& p : dst_corners) {
+            polygon.emplace_back(static_cast<int>(p.x), static_cast<int>(p.y));
+          }
+          cv::polylines(frame, polygon, true, cv::Scalar(0, 255, 0), 3);
+        }
+      }
     }
 
-    cap.release();
-    cv::destroyAllWindows();
-    return 0;
+    // Display result
+    cv::imshow("Object Detection", frame);
+    cv::waitKey(1);
+  }
+
+  std::string ref_path_;
+  cv::Ptr<cv::ORB> orb_;
+  std::vector<cv::KeyPoint> kp_ref_;
+  cv::Mat des_ref_;
+  std::vector<cv::Point2f> ref_corners_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_;
+  cv::BFMatcher bf_{cv::NORM_HAMMING};
+};
+
+int main(int argc, char** argv) {
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<ObjectDetectionNode>());
+  rclcpp::shutdown();
+  return 0;
 }
