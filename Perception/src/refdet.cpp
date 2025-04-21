@@ -29,7 +29,7 @@ public:
 
     // Subscribe to color image topic
     subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
-      "/camera/color/image_raw",
+      "/camera/camera/infra1/image_rect_raw",
       rclcpp::SensorDataQoS(),
       std::bind(&ObjectDetectionNode::imageCallback, this, std::placeholders::_1)
     );
