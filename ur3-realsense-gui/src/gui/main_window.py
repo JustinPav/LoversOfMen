@@ -51,12 +51,8 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-    def start_ur3(self):
-        print("Starting UR3...")
-
-    def stop_ur3(self):
-        print("Stopping UR3...")
-
+    def reset_ur3(self):
+        print("Resetting UR3...")
     def start_realsense(self):
         print("Starting RealSense Camera...")
 
