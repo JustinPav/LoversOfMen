@@ -22,17 +22,17 @@ class MainWindow(QMainWindow):
         self.stop_realsense_button = QPushButton("Stop RealSense Camera")
         self.stop_realsense_button.clicked.connect(self.stop_realsense)
 
+        # Adding the gripper buttons
+        self.open_gripper_button = QPushButton("Open Gripper")
+        self.open_gripper_button.clicked.connect(self.open_gripper)
+
+        self.close_gripper_button = QPushButton("Close Gripper")
+        self.close_gripper_button.clicked.connect(self.close_gripper)
+
         # Adding the E-Stop button
         self.estop_button = QPushButton("E-Stop")
         self.estop_button.setStyleSheet("background-color: red; color: white; font-weight: bold;")
         self.estop_button.clicked.connect(self.estop)
-
-        # Adding the gripper buttons
-        self.close_gripper_button = QPushButton("Close Gripper")
-        self.close_gripper_button.clicked.connect(self.close_gripper)
-
-        self.open_gripper_button = QPushButton("Open Gripper")
-        self.open_gripper_button.clicked.connect(self.open_gripper)
 
         layout.addWidget(self.start_ur3_button)
         layout.addWidget(self.stop_ur3_button)
