@@ -6,8 +6,8 @@ moveit_setup_assistant_config:
     relative_path: config/ur3e_rg2.srdf
   package_settings:
     author_name: Justin Pavlovski
-    author_email: ""
-    generated_timestamp: 1744798139
+    author_email: justin.pavlovski@gmail.com
+    generated_timestamp: 1745299263
   control_xacro:
     command:
       - position
