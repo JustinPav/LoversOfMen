@@ -44,7 +44,7 @@ ur3-realsense-gui
 
 3. Run the application:
    ```
-   python src/main.py
+   python3 src/main.py
    ```
 
 ## Usage Guidelines

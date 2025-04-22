@@ -10,8 +10,14 @@ class MainWindow(QMainWindow):
 
         layout = QVBoxLayout()
 
-        self.start_ur3_button = QPushButton("Start UR3")
-        self.start_ur3_button.clicked.connect(self.start_ur3)
+        self.reset_ur3_button = QPushButton("Reset UR3")
+        self.reset_ur3_button.clicked.connect(self.reset_ur3)
+
+        self.move_to_target_button = QPushButton("Move to Target")
+        self.move_to_target_button.clicked.connect(self.move_to_target)
+        
+        self.move_ur3_button = QPushButton("Move to Goal")
+        self.move_ur3_button.clicked.connect(self.move_ur3)
 
         self.start_realsense_button = QPushButton("Start RealSense")
         self.start_realsense_button.clicked.connect(self.start_realsense)
@@ -34,7 +40,9 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.start_realsense_button)
         layout.addWidget(self.capture_image_button)  # Add the Capture Image button
-        layout.addWidget(self.start_ur3_button)
+        layout.addWidget(self.reset_ur3_button)
+        layout.addWidget(self.move_to_target_button)
+        layout.addWidget(self.move_ur3_button)
         layout.addWidget(self.open_gripper_button)  # Add the Open Gripper button
         layout.addWidget(self.close_gripper_button)  # Add the Close Gripper button
         layout.addWidget(self.estop_button)  # Add the E-Stop button to the layout
