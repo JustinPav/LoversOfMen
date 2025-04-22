@@ -10,10 +10,10 @@ class MainWindow(QMainWindow):
 
         layout = QVBoxLayout()
 
-        self.start_ur3_button = QPushButton("Start UR3 Robot")
+        self.start_ur3_button = QPushButton("Start UR3")
         self.start_ur3_button.clicked.connect(self.start_ur3)
 
-        self.start_realsense_button = QPushButton("Start RealSense Camera")
+        self.start_realsense_button = QPushButton("Start RealSense")
         self.start_realsense_button.clicked.connect(self.start_realsense)
 
         # Changed "Stop RealSense Camera" to "Capture Image"
@@ -44,10 +44,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
     def start_ur3(self):
-        print("Starting UR3 Robot...")
+        print("Starting UR3...")
 
     def stop_ur3(self):
-        print("Stopping UR3 Robot...")
+        print("Stopping UR3...")
 
     def start_realsense(self):
         print("Starting RealSense Camera...")
