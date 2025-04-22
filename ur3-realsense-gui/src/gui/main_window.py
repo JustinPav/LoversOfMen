@@ -13,9 +13,6 @@ class MainWindow(QMainWindow):
         self.start_ur3_button = QPushButton("Start UR3 Robot")
         self.start_ur3_button.clicked.connect(self.start_ur3)
 
-        self.stop_ur3_button = QPushButton("Stop UR3 Robot")
-        self.stop_ur3_button.clicked.connect(self.stop_ur3)
-
         self.start_realsense_button = QPushButton("Start RealSense Camera")
         self.start_realsense_button.clicked.connect(self.start_realsense)
 
@@ -38,7 +35,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.start_realsense_button)
         layout.addWidget(self.capture_image_button)  # Add the Capture Image button
         layout.addWidget(self.start_ur3_button)
-        layout.addWidget(self.stop_ur3_button)
         layout.addWidget(self.open_gripper_button)  # Add the Open Gripper button
         layout.addWidget(self.close_gripper_button)  # Add the Close Gripper button
         layout.addWidget(self.estop_button)  # Add the E-Stop button to the layout
