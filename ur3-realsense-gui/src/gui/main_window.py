@@ -53,6 +53,12 @@ class MainWindow(QMainWindow):
 
     def reset_ur3(self):
         print("Resetting UR3...")
+
+    def move_to_target(self):
+        print("Moving to Target...")
+    def move_ur3(self):
+        print("Moving UR3 to Goal...")
+
     def start_realsense(self):
         print("Starting RealSense Camera...")
 
