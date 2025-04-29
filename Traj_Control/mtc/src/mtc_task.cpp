@@ -160,8 +160,8 @@ mtc::Task MTCTaskNode::createTask()
     task.loadRobotModel(node_);
 
     // Set common task properties: update these to your robot's settings.
-    const std::string arm_group = "ur_manipulator";
-    const std::string eef_group = "gripper"; // Update with gripper name.
+    const std::string arm_group = "ur_onrobot_manipulator";
+    const std::string eef_group = "ur_onrobot_gripper";
     const std::string ik_frame = "tool0";
 
     task.setProperty("group", arm_group);

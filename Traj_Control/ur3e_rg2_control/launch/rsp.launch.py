@@ -24,6 +24,7 @@ def generate_launch_description():
 
     onrobot_type = LaunchConfiguration("onrobot_type")
     prefix = LaunchConfiguration("prefix")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
 
     # Load description with necessary parameters
     robot_description_content = Command(
@@ -32,9 +33,9 @@ def generate_launch_description():
             " ",
             PathJoinSubstitution(
                 [
-                    FindPackageShare("ur3e_rg2_control"),
+                    FindPackageShare("ur3e_rg2_description"),
                     "urdf",
-                    "ur3e_rg2_controlled.urdf.xacro",
+                    "ur3e_rg2.urdf.xacro",
                 ]
             ),
             " ",
@@ -61,6 +62,9 @@ def generate_launch_description():
             " ",
             "prefix:=",
             prefix,
+            " ",
+            "use_fake_hardware:=",
+            use_fake_hardware,
         ]
     )
     
@@ -124,6 +128,26 @@ def generate_launch_description():
             "headless_mode",
             default_value="false",
             description="Enable headless mode for robot control",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "onrobot_type",
+            default_value="rg2",
+            description="Type of OnRobot gripper.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "prefix",
+            default_value="",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_fake_hardware",
+            default_value="false",
+            description="Use fake hardware for testing purposes.",
         )
     )
 
