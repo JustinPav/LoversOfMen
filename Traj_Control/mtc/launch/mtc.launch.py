@@ -4,7 +4,7 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
-    moveit_config = MoveItConfigsBuilder("ur_onrobot").to_moveit_configs()
+    moveit_config = MoveItConfigsBuilder("ur3e_rg2").to_moveit_configs()
 
     move_group_capabilities = {
         "capabilities": "move_group/ExecuteTaskSolutionCapability",
