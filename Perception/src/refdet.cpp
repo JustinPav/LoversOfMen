@@ -1,3 +1,7 @@
+#include <memory>
+#include <string>
+#include <vector>
+
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -6,95 +10,125 @@
 class ObjectDetectionNode : public rclcpp::Node {
 public:
   ObjectDetectionNode()
-  : Node("object_detection_node") {
-    // Declare and get reference image parameter
+  : Node("object_detection_node")
+  {
+    // 1) Declare & read the reference-image path
     this->declare_parameter<std::string>("ref_image_path", "");
     ref_path_ = this->get_parameter("ref_image_path").as_string();
 
-    // Load and preprocess reference image
-    cv::Mat ref = cv::imread(ref_path_, cv::IMREAD_GRAYSCALE);
-    if (ref.empty()) {
-      RCLCPP_FATAL(this->get_logger(), "Cannot load reference image: %s", ref_path_.c_str());
+    if (ref_path_.empty()) {
+      RCLCPP_FATAL(get_logger(),
+        "Parameter 'ref_image_path' is empty. Pass it via -p ref_image_path:=/full/path.jpg");
       rclcpp::shutdown();
       return;
     }
-    orb_ = cv::ORB::create(1000);
-    orb_->detectAndCompute(ref, cv::noArray(), kp_ref_, des_ref_);
-    ref_corners_ = std::vector<cv::Point2f>{
-      {0, 0},
-      {static_cast<float>(ref.cols), 0},
-      {static_cast<float>(ref.cols), static_cast<float>(ref.rows)},
-      {0, static_cast<float>(ref.rows)}
-    };
 
-    // Subscribe to color image topic
+    // 2) Load & preprocess the reference image
+    cv::Mat ref_gray = cv::imread(ref_path_, cv::IMREAD_GRAYSCALE);
+    if (ref_gray.empty()) {
+      RCLCPP_FATAL(get_logger(), "Failed to load reference image: %s", ref_path_.c_str());
+      rclcpp::shutdown();
+      return;
+    }
+    cv::GaussianBlur(ref_gray, ref_gray, cv::Size(7,7), 1.5);
+    cv::threshold(ref_gray, ref_mask_, 128, 255, cv::THRESH_BINARY);
+
+    // 3) Extract the main contour from the reference mask
+    {
+      std::vector<std::vector<cv::Point>> ref_contours;
+      cv::findContours(ref_mask_, ref_contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+      if (ref_contours.empty()) {
+        RCLCPP_FATAL(get_logger(), "No contours found in reference image");
+        rclcpp::shutdown();
+        return;
+      }
+      // pick the largest by area
+      auto largest = std::max_element(
+        ref_contours.begin(), ref_contours.end(),
+        [](auto &a, auto &b){ return cv::contourArea(a) < cv::contourArea(b); }
+      );
+      ref_contour_ = *largest;
+    }
+
+    // 4) Set up blob detector
+    cv::SimpleBlobDetector::Params params;
+    params.filterByArea = true;
+    params.minArea = 200.0f;
+    params.maxArea = 50000.0f;
+    params.filterByCircularity = false;
+    params.filterByConvexity  = false;
+    params.filterByInertia    = false;
+    blob_detector_ = cv::SimpleBlobDetector::create(params);
+
+    // 5) Create display windows
+    cv::namedWindow("Detection", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("Mask",      cv::WINDOW_AUTOSIZE);
+
+    // 6) Subscribe to the color image topic
     subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
       "/camera/camera/infra1/image_rect_raw",
       rclcpp::SensorDataQoS(),
       std::bind(&ObjectDetectionNode::imageCallback, this, std::placeholders::_1)
     );
+
+    RCLCPP_INFO(get_logger(), "ObjectDetectionNode initialized, reference = %s", ref_path_.c_str());
   }
 
 private:
-  void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr& msg) {
-    // Convert ROS image to OpenCV
+  void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr & msg) {
+    // Convert to OpenCV BGR
     cv::Mat frame = cv_bridge::toCvCopy(msg, "bgr8")->image;
-    cv::Mat gray;
+
+    // Preprocess: gray, blur, threshold
+    cv::Mat gray, blurred, mask;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    cv::GaussianBlur(gray, blurred, cv::Size(7,7), 1.5);
+    cv::threshold(blurred, mask, 128, 255, cv::THRESH_BINARY_INV);
 
-    // Detect features in frame
-    std::vector<cv::KeyPoint> kp_frame;
-    cv::Mat des_frame;
-    orb_->detectAndCompute(gray, cv::noArray(), kp_frame, des_frame);
+    // 1) Contour‐based shape matching
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-    if (!des_frame.empty() && kp_frame.size() >= 10) {
-      // KNN match and ratio test
-      std::vector<std::vector<cv::DMatch>> knn_matches;
-      bf_.knnMatch(des_ref_, des_frame, knn_matches, 2);
-      std::vector<cv::DMatch> good_matches;
-      for (const auto& m : knn_matches) {
-        if (m.size() == 2 && m[0].distance < 0.75f * m[1].distance) {
-          good_matches.push_back(m[0]);
-        }
-      }
+    for (auto &cnt : contours) {
+      double area = cv::contourArea(cnt);
+      if (area < 500.0) continue;
 
-      // If enough good matches, compute homography
-      if (good_matches.size() > 15) {
-        std::vector<cv::Point2f> src_pts, dst_pts;
-        for (const auto& match : good_matches) {
-          src_pts.push_back(kp_ref_[match.queryIdx].pt);
-          dst_pts.push_back(kp_frame[match.trainIdx].pt);
-        }
-        cv::Mat H = cv::findHomography(src_pts, dst_pts, cv::RANSAC, 5.0);
-        if (!H.empty()) {
-          std::vector<cv::Point2f> dst_corners;
-          cv::perspectiveTransform(ref_corners_, dst_corners, H);
-          std::vector<cv::Point> polygon;
-          for (const auto& p : dst_corners) {
-            polygon.emplace_back(static_cast<int>(p.x), static_cast<int>(p.y));
-          }
-          cv::polylines(frame, polygon, true, cv::Scalar(0, 255, 0), 3);
-        }
+      double score = cv::matchShapes(cnt, ref_contour_, cv::CONTOURS_MATCH_I1, 0.0);
+      if (score < shape_match_thresh_) {
+        // draw matched contour
+        std::vector<cv::Point> hull;
+        cv::convexHull(cnt, hull);
+        cv::polylines(frame, hull, true, cv::Scalar(0,255,0), 2);
       }
     }
 
-    // Display result
-    cv::imshow("Object Detection", frame);
+    // 2) Blob detection
+    std::vector<cv::KeyPoint> keypoints;
+    blob_detector_->detect(mask, keypoints);
+    cv::drawKeypoints(
+      frame, keypoints, frame,
+      cv::Scalar(0,0,255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS
+    );
+
+    // Display
+    cv::imshow("Mask",      mask);
+    cv::imshow("Detection", frame);
     cv::waitKey(1);
   }
 
+  // Members
   std::string ref_path_;
-  cv::Ptr<cv::ORB> orb_;
-  std::vector<cv::KeyPoint> kp_ref_;
-  cv::Mat des_ref_;
-  std::vector<cv::Point2f> ref_corners_;
+  cv::Mat ref_mask_;
+  std::vector<cv::Point> ref_contour_;
+  const double shape_match_thresh_{0.1};  // tweak this as needed
+  cv::Ptr<cv::SimpleBlobDetector> blob_detector_;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_;
-  cv::BFMatcher bf_{cv::NORM_HAMMING};
 };
 
-int main(int argc, char** argv) {
+int main(int argc, char ** argv) {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<ObjectDetectionNode>());
+  auto node = std::make_shared<ObjectDetectionNode>();
+  rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
 }
