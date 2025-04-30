@@ -20,12 +20,10 @@ int main(int argc, char **argv)
   initial_pose.orientation.w = 1.0;
 
   geometry_msgs::msg::Pose goal_pose;
-  tf2::Quaternion q;
-  q.setRPY(0, M_PI, 0); // Rotate 90 degrees around the Z-axis
-  goal_pose.position.x = 0.35;
-  goal_pose.position.y = 0.25;
-  goal_pose.position.z = 0.05;
-  goal_pose.orientation = tf2::toMsg(q);
+  goal_pose.position.x = 0.0;
+  goal_pose.position.y = 0.45;
+  goal_pose.position.z = 0.0;
+  goal_pose.orientation.w = 1.0;
 
   // Set the new block poses
   mtc_task_node->setBlockPoses(initial_pose, goal_pose);
