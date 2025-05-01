@@ -19,14 +19,20 @@ int main(int argc, char **argv)
   initial_pose.position.z = 0.05;
   initial_pose.orientation.w = 1.0;
 
+  std::vector<geometry_msgs::msg::Pose> initial_poses;
+  initial_poses.push_back(initial_pose);
+
   geometry_msgs::msg::Pose goal_pose;
   goal_pose.position.x = 0.0;
   goal_pose.position.y = 0.45;
   goal_pose.position.z = 0.0;
   goal_pose.orientation.w = 1.0;
 
+  std::vector<geometry_msgs::msg::Pose> goal_poses;
+  goal_poses.push_back(goal_pose);
+
   // Set the new block poses
-  mtc_task_node->setBlockPoses(initial_pose, goal_pose);
+  mtc_task_node->setBlockPoses(initial_poses, goal_poses);
 
   rclcpp::executors::MultiThreadedExecutor executor;
   auto spin_thread = std::make_unique<std::thread>([&executor, &mtc_task_node]()

@@ -19,8 +19,13 @@ find_package(moveit_task_constructor_msgs REQUIRED)
 add_executable(main src/main.cpp src/mtc_task.cpp)
 ament_target_dependencies(main rclcpp std_msgs trajectory_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface moveit_task_constructor_core moveit_task_constructor_msgs)
 
+add_executable(test_exec src/test_main.cpp src/test_exec.cpp)
+ament_target_dependencies(test_exec rclcpp std_msgs trajectory_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface moveit_task_constructor_core moveit_task_constructor_msgs)
+
+
 install(TARGETS
   main
+  test_exec
   DESTINATION lib/${PROJECT_NAME}
 )
 

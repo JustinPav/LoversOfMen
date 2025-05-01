@@ -18,7 +18,7 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     p1.position.y = -0.2;
     p1.position.z = 0.05;
     p1.orientation.w = 1.0;
-    block_locations_.push_back(p1);
+    current_box_pose_ = p1;
 
     geometry_msgs::msg::Pose goal1;
     goal1.position.x = 0.05;
@@ -26,16 +26,17 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     goal1.position.z = 0.05;
     goal1.orientation.w = 1.0;
 
-    goal_pose_ = goal1;
+    current_goal_pose_ = goal1;
 }
 
-void MTCTaskNode::setBlockPoses(const geometry_msgs::msg::Pose &initial_pose, const geometry_msgs::msg::Pose &goal_pose)
+void MTCTaskNode::setBlockPoses(const std::vector<geometry_msgs::msg::Pose> &initial_poses, const std::vector<geometry_msgs::msg::Pose> &goal_poses)
 {
     // Update block_locations_ (for collision objects) and task poses.
-    block_locations_.clear();
-    block_locations_.push_back(initial_pose);
+    block_locations_ = initial_poses;
+    goal_locations_ = goal_poses;
 
-    goal_pose_ = goal_pose;
+    current_box_pose_ = block_locations_.front();
+    current_goal_pose_ = goal_locations_.front();
 }
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr MTCTaskNode::getNodeBaseInterface()
@@ -295,7 +296,7 @@ mtc::Task MTCTaskNode::createTask()
 
             geometry_msgs::msg::PoseStamped target_pose_msg;
             target_pose_msg.header.frame_id = "cube_0";
-            target_pose_msg.pose = goal_pose_;
+            target_pose_msg.pose = current_goal_pose_;
             stage->setPose(target_pose_msg);
             stage->setMonitoredStage(attach_object_stage); // Hook into attach_object_stage
 

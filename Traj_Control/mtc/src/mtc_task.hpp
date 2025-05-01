@@ -27,7 +27,7 @@ public:
   void doTask();
 
   // Set the block's initial (pickup) and goal (placement) poses.
-  void setBlockPoses(const geometry_msgs::msg::Pose &initial_pose, const geometry_msgs::msg::Pose &goal_pose);
+  void setBlockPoses(const std::vector<geometry_msgs::msg::Pose> &initial_poses, const std::vector<geometry_msgs::msg::Pose> &goal_poses);
 
 private:
   // Create an MTC task composed of several stages.
@@ -42,13 +42,11 @@ private:
   mtc::Task task_;
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface_;
   std::vector<geometry_msgs::msg::Pose> block_locations_;
+  std::vector<geometry_msgs::msg::Pose> goal_locations_;
 
   // Poses used in the task stages:
-  geometry_msgs::msg::Pose current_box_pose_; // Approach pose above the block (for pick-up)
-  geometry_msgs::msg::Pose lifted_pose_;      // Pose after lifting the block
-  geometry_msgs::msg::Pose reorient_pose_;    // Pose with the block re-oriented
-  geometry_msgs::msg::Pose goal_pose_;        // Pose for moving toward the placement location
-  geometry_msgs::msg::Pose place_pose_;       // Final pose for placing the block
+  geometry_msgs::msg::Pose current_box_pose_;  // Approach pose above the block (for pick-up)
+  geometry_msgs::msg::Pose current_goal_pose_; // Pose for moving toward the placement location
 };
 
 #endif // MTC_TASK_HPP
