@@ -12,7 +12,7 @@
 
 namespace mtc = moveit::task_constructor;
 
-class MTCTaskNode
+class MTCTaskNode : public rclcpp::Node
 {
 public:
   MTCTaskNode(const rclcpp::NodeOptions &options = rclcpp::NodeOptions());
@@ -38,7 +38,6 @@ private:
       const std::vector<geometry_msgs::msg::Pose> &waypoints, const std::string &planning_frame);
 
   // Member variables
-  rclcpp::Node::SharedPtr node_;
   mtc::Task task_;
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface_;
   std::vector<geometry_msgs::msg::Pose> block_locations_;

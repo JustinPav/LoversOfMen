@@ -119,7 +119,7 @@ void MTCTaskNode::doTask()
 mtc::Task MTCTaskNode::createTask()
 {
     mtc::Task task;
-    task.stages()->setName("Pick and Place Task");
+    task.stages()->setName("Test Task Execution");
     task.loadRobotModel(node_);
 
     // Set common task properties: update these to your robot's settings.

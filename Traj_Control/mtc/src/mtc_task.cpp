@@ -9,10 +9,9 @@
 using namespace std::chrono_literals;
 
 MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
+    : rclcpp::Node("mtc_task_node", options)
 {
-    node_ = std::make_shared<rclcpp::Node>("mtc_task_node", options);
 
-    // Define a default pickup location (can be overridden later with setBlockPoses)
     geometry_msgs::msg::Pose p1;
     p1.position.x = 0.4;
     p1.position.y = -0.2;
@@ -25,7 +24,6 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     goal1.position.y = 0.05;
     goal1.position.z = 0.05;
     goal1.orientation.w = 1.0;
-
     current_goal_pose_ = goal1;
 }
 
@@ -41,7 +39,7 @@ void MTCTaskNode::setBlockPoses(const std::vector<geometry_msgs::msg::Pose> &ini
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr MTCTaskNode::getNodeBaseInterface()
 {
-    return node_->get_node_base_interface();
+    return this->get_node_base_interface();
 }
 
 std::vector<moveit_msgs::msg::CollisionObject> MTCTaskNode::createCollisionObjects(
@@ -77,7 +75,7 @@ void MTCTaskNode::setupPlanningScene()
 {
     auto collision_objects = createCollisionObjects(block_locations_, "world");
     planning_scene_interface_.applyCollisionObjects(collision_objects);
-    RCLCPP_INFO(node_->get_logger(), "Added %zu collision objects to the planning scene.", collision_objects.size());
+    RCLCPP_INFO(this->get_logger(), "Added %zu collision objects to the planning scene.", collision_objects.size());
 }
 
 void MTCTaskNode::doTask()
@@ -90,14 +88,14 @@ void MTCTaskNode::doTask()
     }
     catch (mtc::InitStageException &e)
     {
-        RCLCPP_ERROR_STREAM(node_->get_logger(), "Task initialization failed: " << e);
+        RCLCPP_ERROR_STREAM(this->get_logger(), "Task initialization failed: " << e);
         return;
     }
 
     // Plan the task (allow up to 5 planning attempts)
     if (!task_.plan(5))
     {
-        RCLCPP_ERROR(node_->get_logger(), "Task planning failed");
+        RCLCPP_ERROR(this->get_logger(), "Task planning failed");
         return;
     }
 
@@ -108,11 +106,11 @@ void MTCTaskNode::doTask()
     auto result = task_.execute(*task_.solutions().front());
     if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
     {
-        RCLCPP_ERROR(node_->get_logger(), "Task execution failed");
+        RCLCPP_ERROR(this->get_logger(), "Task execution failed");
         return;
     }
 
-    RCLCPP_INFO(node_->get_logger(), "Task executed successfully");
+    RCLCPP_INFO(this->get_logger(), "Task executed successfully");
     return;
 }
 
@@ -120,7 +118,7 @@ mtc::Task MTCTaskNode::createTask()
 {
     mtc::Task task;
     task.stages()->setName("Pick and Place Task");
-    task.loadRobotModel(node_);
+    task.loadRobotModel(this->shared_from_this());
 
     // Set common task properties: update these to your robot's settings.
     const std::string arm_group = "ur_onrobot_manipulator";
@@ -131,6 +129,9 @@ mtc::Task MTCTaskNode::createTask()
     task.setProperty("group", arm_group);
     task.setProperty("eef", eef_group);
     task.setProperty("ik_frame", ik_frame);
+
+    // Set timeout for Connect stages
+    double timeout = 5.0;
 
     // Stage 1: Current state
 #pragma GCC diagnostic push
@@ -143,7 +144,7 @@ mtc::Task MTCTaskNode::createTask()
     task.add(std::move(stage_current));
 
     // Create planners for the stages (using Pipeline or JointInterpolation planners)
-    auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_);
+    auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(this->shared_from_this());
     sampling_planner->init(task.getRobotModel());
     auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
     auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
@@ -177,12 +178,14 @@ mtc::Task MTCTaskNode::createTask()
         "move to pick",
         mtc::stages::Connect::GroupPlannerVector{{arm_group, sampling_planner}});
 
-    stage_move_to_pick->setTimeout(5.0);
+    stage_move_to_pick->setTimeout(timeout);
     stage_move_to_pick->properties().configureInitFrom(mtc::Stage::PARENT);
     task.add(std::move(stage_move_to_pick));
 
     mtc::Stage *attach_object_stage = nullptr; // Forward attach_object_stage to place pose generator
 
+    // Stage: Pick object
+    // Create a container for the grasp stage
     {
         auto grasp = std::make_unique<mtc::SerialContainer>("pick object");
         task.properties().exposeTo(grasp->properties(), {"eef", "group", "ik_frame"});
@@ -276,12 +279,14 @@ mtc::Task MTCTaskNode::createTask()
     // Stage: Move to place pose
     auto stage_move_to_place = std::make_unique<mtc::stages::Connect>(
         "move to place",
-        mtc::stages::Connect::GroupPlannerVector{{arm_group, sampling_planner},
-                                                 {gripper_group, interpolation_planner}});
-    stage_move_to_place->setTimeout(5.0);
+        mtc::stages::Connect::GroupPlannerVector{{arm_group, sampling_planner}});
+
+    stage_move_to_place->setTimeout(timeout);
     stage_move_to_place->properties().configureInitFrom(mtc::Stage::PARENT);
     task.add(std::move(stage_move_to_place));
 
+    // Stage: Place object
+    // Create a container for the place stage
     {
         auto place = std::make_unique<mtc::SerialContainer>("place object");
         task.properties().exposeTo(place->properties(), {"eef", "group", "ik_frame"});
