@@ -14,8 +14,8 @@ int main(int argc, char **argv)
   // Example: set new block poses via the setBlockPoses method.
   // These can be read from user input, a file, or another source.
   geometry_msgs::msg::Pose initial_pose;
-  initial_pose.position.x = 0.35;
-  initial_pose.position.y = -0.2;
+  initial_pose.position.x = 0.1;
+  initial_pose.position.y = -0.4;
   initial_pose.position.z = 0.05;
   initial_pose.orientation.w = 1.0;
 
@@ -23,9 +23,9 @@ int main(int argc, char **argv)
   initial_poses.push_back(initial_pose);
 
   geometry_msgs::msg::Pose goal_pose;
-  goal_pose.position.x = 0.0;
-  goal_pose.position.y = 0.45;
-  goal_pose.position.z = 0.0;
+  goal_pose.position.x = 0.35;
+  goal_pose.position.y = 0.25;
+  goal_pose.position.z = 0.05;
   goal_pose.orientation.w = 1.0;
 
   std::vector<geometry_msgs::msg::Pose> goal_poses;

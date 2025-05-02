@@ -31,7 +31,17 @@ void MTCTaskNode::setBlockPoses(const std::vector<geometry_msgs::msg::Pose> &ini
 {
     // Update block_locations_ (for collision objects) and task poses.
     block_locations_ = initial_poses;
-    goal_locations_ = goal_poses;
+    for (int i = 0; i < goal_poses.size(); ++i)
+    {
+        auto goal = goal_poses.at(i);
+        auto block = initial_poses.at(i);
+        geometry_msgs::msg::Pose goal_ref;
+        goal_ref.position.x = goal.position.x - block.position.x;
+        goal_ref.position.y = goal.position.y - block.position.y;
+        goal_ref.position.z = goal.position.z - block.position.z;
+        goal_ref.orientation = goal.orientation;
+        goal_locations_.push_back(goal_ref);
+    }
 
     current_box_pose_ = block_locations_.front();
     current_goal_pose_ = goal_locations_.front();
@@ -92,8 +102,8 @@ void MTCTaskNode::doTask()
         return;
     }
 
-    // Plan the task (allow up to 5 planning attempts)
-    if (!task_.plan(5))
+    // Plan the task
+    if (!task_.plan(15))
     {
         RCLCPP_ERROR(this->get_logger(), "Task planning failed");
         return;
@@ -130,8 +140,12 @@ mtc::Task MTCTaskNode::createTask()
     task.setProperty("eef", eef_group);
     task.setProperty("ik_frame", ik_frame);
 
-    // Set timeout for Connect stages
+    task.setCostTerm(std::make_shared<mtc::cost::TrajectoryDuration>());
+
+    // Set timeout for Connect stages as well as acceleration and velocity scaling factors
     double timeout = 5.0;
+    double acc = 0.5;
+    double vel = 1.0;
 
     // Stage 1: Current state
 #pragma GCC diagnostic push
@@ -144,12 +158,17 @@ mtc::Task MTCTaskNode::createTask()
     task.add(std::move(stage_current));
 
     // Create planners for the stages (using Pipeline or JointInterpolation planners)
-    auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(this->shared_from_this());
-    sampling_planner->init(task.getRobotModel());
+    auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(this->shared_from_this(), "ompl");
+    sampling_planner->setMaxAccelerationScalingFactor(acc);
+    sampling_planner->setMaxVelocityScalingFactor(vel);
+
     auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
+    interpolation_planner->setMaxAccelerationScalingFactor(acc);
+    interpolation_planner->setMaxVelocityScalingFactor(vel);
+
     auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
-    cartesian_planner->setMaxVelocityScalingFactor(1.0);
-    cartesian_planner->setMaxAccelerationScalingFactor(1.0);
+    cartesian_planner->setMaxAccelerationScalingFactor(acc);
+    cartesian_planner->setMaxVelocityScalingFactor(vel);
     cartesian_planner->setStepSize(0.005);
 
     // Stage: Move to a specific joint configuration (starting configuration)
@@ -180,6 +199,7 @@ mtc::Task MTCTaskNode::createTask()
 
     stage_move_to_pick->setTimeout(timeout);
     stage_move_to_pick->properties().configureInitFrom(mtc::Stage::PARENT);
+    stage_move_to_pick->setMaxDistance(10.0);
     task.add(std::move(stage_move_to_pick));
 
     mtc::Stage *attach_object_stage = nullptr; // Forward attach_object_stage to place pose generator
@@ -283,6 +303,7 @@ mtc::Task MTCTaskNode::createTask()
 
     stage_move_to_place->setTimeout(timeout);
     stage_move_to_place->properties().configureInitFrom(mtc::Stage::PARENT);
+    stage_move_to_place->setMaxDistance(10.0);
     task.add(std::move(stage_move_to_place));
 
     // Stage: Place object
