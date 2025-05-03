@@ -11,7 +11,7 @@
   <!--You could as well point to ur_description but this way you make sure you use the same files as start_robot.launch.py which searches in runtime_config_package for joint_limits.yaml, physical_parameters.yaml, visual_parameters.yaml and in description_package for default_kinematics.yaml (last one can be overwritten)-->
   <xacro:arg name="ur_type" default="ur3e"/>
   <xacro:arg name="onrobot_type" default="rg2"/>
-  <xacro:arg name="prefix" default="ur3e_"/>
+  <xacro:arg name="prefix" default=""/>
   <xacro:arg name="joint_limit_params" default="$(find ur3e_rg2_control)/config/$(arg ur_type)/joint_limits.yaml"/>
   <xacro:arg name="kinematics_params" default="$(find ur3e_rg2_control)/config/$(arg ur_type)/default_kinematics.yaml"/>
   <xacro:arg name="physical_params" default="$(find ur3e_rg2_control)/config/$(arg ur_type)/physical_parameters.yaml"/>
@@ -42,6 +42,7 @@
     kinematics_parameters_file="$(arg kinematics_params)"
     physical_parameters_file="$(arg physical_params)"
     visual_parameters_file="$(arg visual_params)"
+    use_fake_hardware="$(arg use_fake_hardware)"
   >
     <origin xyz="0 0 1" rpy="0 0 0" />
   </xacro:ur3e_rg2>
@@ -49,7 +50,7 @@
 
   <!--Create the control tag for the UR robot-->
   <xacro:ur_ros2_control
-    name="$(arg ur_type)"
+    name="ur"
     tf_prefix="$(arg ur_type)_"
     hash_kinematics="${kinematics_hash}"
     robot_ip="$(arg robot_ip)"
@@ -61,17 +62,7 @@
     headless_mode="$(arg headless_mode)"
   />
 
-  <!--Create the control tag for the Onrobot RG2 robot-->
-  <ros2_control name="onrobot_gripper" type="system">
-    <!-- You may need to update joint name depending on your gripper's setup -->
-    <joint name="$(arg prefix)gripper_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-  </ros2_control>
-
-
   <!--If you had more controlled devices in your description, e.g. a gripper, you can add another ros2_control tag here-->
+
 
 </robot>

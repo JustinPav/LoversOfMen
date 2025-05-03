@@ -2,46 +2,42 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ur3e_rg2_moveit_config</name>
-  <version>0.3.0</version>
+  <version>0.0.1</version>
   <description>
-     An automatically generated package with all the configuration and launch files for using the ur3e_rg2 with the MoveIt Motion Planning Framework
+     An example package with MoveIt2 configurations for UR robots.
   </description>
-  <maintainer email="justin.pavlovski@gmail.com">Justin Pavlovski</maintainer>
 
-  <license>BSD</license>
+  <maintainer email="feex@universal-robots.com">Felix Exner</maintainer>
+  <maintainer email="rsk@universal-robots.com">Rune Søe-Knudsen</maintainer>
+  <maintainer email="ros@universal-robots.com">Universal Robots A/S</maintainer>
 
-  <url type="website">http://moveit.ros.org/</url>
-  <url type="bugtracker">https://github.com/ros-planning/moveit2/issues</url>
-  <url type="repository">https://github.com/ros-planning/moveit2</url>
+  <license>Apache2.0</license>
 
-  <author email="justin.pavlovski@gmail.com">Justin Pavlovski</author>
+  <author email="lovro.ivanov@gmail.com">Lovro Ivanov</author>
+  <author email="zelenak@picknik.ai">Andy Zelenak</author>
+  <author email="dipentima@fzi.de">Vincenzo Di Pentima</author>
+  <author email="denis@stoglrobotics.de">Denis Stogl</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
 
-  <exec_depend>moveit_ros_move_group</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
   <exec_depend>moveit_kinematics</exec_depend>
-  <exec_depend>moveit_planners</exec_depend>
-  <exec_depend>moveit_simple_controller_manager</exec_depend>
-  <exec_depend>joint_state_publisher</exec_depend>
-  <exec_depend>joint_state_publisher_gui</exec_depend>
-  <exec_depend>tf2_ros</exec_depend>
-  <exec_depend>xacro</exec_depend>
-  <!-- The next 2 packages are required for the gazebo simulation.
-       We don't include them by default to prevent installing gazebo and all its dependencies. -->
-  <!-- <exec_depend>joint_trajectory_controller</exec_depend> -->
-  <!-- <exec_depend>gazebo_ros_control</exec_depend> -->
-  <exec_depend>moveit_configs_utils</exec_depend>
+  <exec_depend>moveit_planners_ompl</exec_depend>
   <exec_depend>moveit_ros_move_group</exec_depend>
   <exec_depend>moveit_ros_visualization</exec_depend>
-  <exec_depend>moveit_setup_assistant</exec_depend>
+  <exec_depend>moveit_servo</exec_depend>
+  <exec_depend>moveit_simple_controller_manager</exec_depend>
   <exec_depend>rviz2</exec_depend>
-  <exec_depend>rviz_common</exec_depend>
-  <exec_depend>rviz_default_plugins</exec_depend>
-  <exec_depend>ur3e_rg2_description</exec_depend>
+  <exec_depend>ur_onrobot_description</exec_depend>
+  <exec_depend>ur_description</exec_depend>
+  <exec_depend>onrobot_description</exec_depend>
+  <exec_depend>urdf</exec_depend>
+  <exec_depend>warehouse_ros_sqlite</exec_depend>
   <exec_depend>xacro</exec_depend>
 
-
   <export>
-      <build_type>ament_cmake</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

@@ -1,7 +1,33 @@
-import os
+# Copyright (c) 2021 PickNik, Inc.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#
+#    * Neither the name of the {copyright_holder} nor the names of its
+#      contributors may be used to endorse or promote products derived from
+#      this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
-from launch import LaunchDescription
-from launch_ros.actions import Node
+#
+# Author: Denis Stogl
 
 import os
 
@@ -19,9 +45,10 @@ from launch.substitutions import (
     PathJoinSubstitution,
 )
 
+
 def launch_setup(context, *args, **kwargs):
 
-# Initialize Arguments
+    # Initialize Arguments
     ur_type = LaunchConfiguration("ur_type")
     onrobot_type = LaunchConfiguration("onrobot_type")
     safety_limits = LaunchConfiguration("safety_limits")
@@ -38,9 +65,9 @@ def launch_setup(context, *args, **kwargs):
     warehouse_sqlite_path = LaunchConfiguration("warehouse_sqlite_path")
     prefix = LaunchConfiguration("prefix")
     use_sim_time = LaunchConfiguration("use_sim_time")
+    launch_rviz = LaunchConfiguration("launch_rviz")
+    launch_servo = LaunchConfiguration("launch_servo")
 
-
-    # Get absolute path to kinematics.yaml in mtc/config/
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare(ur_description_package), "config", ur_type, "joint_limits.yaml"]
     )
@@ -189,10 +216,10 @@ def launch_setup(context, *args, **kwargs):
     move_group_capabilities = {
         "capabilities": "move_group/ExecuteTaskSolutionCapability"
     }
-
-    mtc_task = Node(
-        package="mtc",
-        executable="main",
+    # Start the actual move_group node/action server
+    move_group_node = Node(
+        package="moveit_ros_move_group",
+        executable="move_group",
         output="screen",
         parameters=[
             robot_description,
@@ -207,11 +234,55 @@ def launch_setup(context, *args, **kwargs):
             {"use_sim_time": use_sim_time},
             warehouse_ros_config,
             move_group_capabilities,
-        ]
+        ],
     )
-    return [mtc_task]
+
+    # rviz with moveit configuration
+    rviz_config_file = PathJoinSubstitution(
+        [FindPackageShare(moveit_config_package), "rviz", "view_robot.rviz"]
+    )
+    rviz_node = Node(
+        package="rviz2",
+        condition=IfCondition(launch_rviz),
+        executable="rviz2",
+        name="rviz2_moveit",
+        output="log",
+        arguments=["-d", rviz_config_file],
+        parameters=[
+            robot_description,
+            robot_description_semantic,
+            ompl_planning_pipeline_config,
+            robot_description_kinematics,
+            robot_description_planning,
+            warehouse_ros_config,
+            {
+                "use_sim_time": use_sim_time,
+            },
+        ],
+    )
+
+    # Servo node for realtime control
+    servo_yaml = load_yaml("ur3e_rg2_moveit_config", "config/ur_onrobot_servo.yaml")
+    servo_params = {"moveit_servo": servo_yaml}
+    servo_node = Node(
+        package="moveit_servo",
+        condition=IfCondition(launch_servo),
+        executable="servo_node_main",
+        parameters=[
+            servo_params,
+            robot_description,
+            robot_description_semantic,
+        ],
+        output="screen",
+    )
+
+    nodes_to_start = [move_group_node, rviz_node, servo_node]
+
+    return nodes_to_start
+
 
 def generate_launch_description():
+
     declared_arguments = []
     declared_arguments.append(
         DeclareLaunchArgument(
@@ -315,6 +386,12 @@ def generate_launch_description():
             "multi-robot setup. If changed than also joint names in the controllers' configuration "
             "have to be updated.",
         )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument("launch_rviz", default_value="true", description="Launch RViz?")
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument("launch_servo", default_value="true", description="Launch Servo?")
     )
 
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])
