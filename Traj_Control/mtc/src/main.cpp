@@ -15,7 +15,7 @@ int main(int argc, char **argv)
   // These can be read from user input, a file, or another source.
   geometry_msgs::msg::Pose initial_pose;
   initial_pose.position.x = 0.1;
-  initial_pose.position.y = -0.4;
+  initial_pose.position.y = -0.39;
   initial_pose.position.z = 0.05;
   initial_pose.orientation.w = 1.0;
 
