@@ -2,6 +2,7 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
+#include "perception/msg/coordinates.hpp" // Include the custom message
 
 class ColorDetector : public rclcpp::Node
 {
@@ -12,12 +13,15 @@ public:
             "/camera/aligned_depth_to_color/image_raw", 10,
             std::bind(&ColorDetector::imageCallback, this, std::placeholders::_1));
 
+        coordinates_pub_ = this->create_publisher<perception::msg::Coordinates>("coordinates", 10);
+
         cv::namedWindow("Camera Feed");
         cv::namedWindow("Dominant Colors");
     }
 
 private:
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
+    rclcpp::Publisher<perception::msg::Coordinates>::SharedPtr coordinates_pub_;
 
     void imageCallback(const sensor_msgs::msg::Image::SharedPtr msg)
     {
@@ -77,6 +81,13 @@ private:
 
         cv::imshow("Dominant Colors", palette);
         cv::waitKey(1);
+
+        // Publish coordinates (example: center of the image)
+        auto coordinates_msg = perception::msg::Coordinates();
+        coordinates_msg.x = image.cols / 2.0;
+        coordinates_msg.y = image.rows / 2.0;
+        coordinates_msg.z = 0.0; // Example: no depth information
+        coordinates_pub_->publish(coordinates_msg);
     }
 };
 

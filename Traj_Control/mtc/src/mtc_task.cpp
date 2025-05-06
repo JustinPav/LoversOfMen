@@ -257,7 +257,7 @@ mtc::Task MTCTaskNode::createTask()
             auto wrapper =
                 std::make_unique<mtc::stages::ComputeIK>("grasp pose IK", std::move(stage));
 
-            wrapper->setMaxIKSolutions(8);
+            wrapper->setMaxIKSolutions(20);
             wrapper->setMinSolutionDistance(1.0);
             wrapper->setIKFrame(grasp_frame_transform, ik_frame);
             wrapper->properties().configureInitFrom(mtc::Stage::PARENT, {"eef", "group"});
