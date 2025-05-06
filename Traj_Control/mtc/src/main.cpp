@@ -14,21 +14,25 @@ int main(int argc, char **argv)
   // Example: set new block poses via the setBlockPoses method.
   // These can be read from user input, a file, or another source.
   geometry_msgs::msg::Pose initial_pose;
-  initial_pose.position.x = 0.35;
-  initial_pose.position.y = -0.2;
+  initial_pose.position.x = 0.1;
+  initial_pose.position.y = -0.39;
   initial_pose.position.z = 0.05;
   initial_pose.orientation.w = 1.0;
 
+  std::vector<geometry_msgs::msg::Pose> initial_poses;
+  initial_poses.push_back(initial_pose);
+
   geometry_msgs::msg::Pose goal_pose;
-  tf2::Quaternion q;
-  q.setRPY(0, M_PI, 0); // Rotate 90 degrees around the Z-axis
   goal_pose.position.x = 0.35;
   goal_pose.position.y = 0.25;
   goal_pose.position.z = 0.05;
-  goal_pose.orientation = tf2::toMsg(q);
+  goal_pose.orientation.w = 1.0;
+
+  std::vector<geometry_msgs::msg::Pose> goal_poses;
+  goal_poses.push_back(goal_pose);
 
   // Set the new block poses
-  mtc_task_node->setBlockPoses(initial_pose, goal_pose);
+  mtc_task_node->setBlockPoses(initial_poses, goal_poses);
 
   rclcpp::executors::MultiThreadedExecutor executor;
   auto spin_thread = std::make_unique<std::thread>([&executor, &mtc_task_node]()
