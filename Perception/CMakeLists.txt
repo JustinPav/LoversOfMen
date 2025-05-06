@@ -13,7 +13,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
+#find_package(rosidl_default_generators REQUIRED)
 
 
 # Include OpenCV headers
@@ -27,18 +27,18 @@ include_directories(
   )
 
 # Executable: find_block_coordinates
-add_executable(find_block_coordinates src/findBlockCoordinates.cpp)
-ament_target_dependencies(find_block_coordinates
-  rclcpp
-  sensor_msgs
-  cv_bridge
-  image_transport
-  OpenCV
-  rosidl_default_runtime
-)
-target_link_libraries(find_block_coordinates
-  ${OpenCV_LIBRARIES}
-)
+#add_executable()#find_block_coordinates src/findBlockCoordinates.cpp)
+#ament_target_dependencies(find_block_coordinates
+#  rclcpp
+#  sensor_msgs
+#  cv_bridge
+#  image_transport
+#  OpenCV
+#  rosidl_default_runtime
+#)
+#target_link_libraries(find_block_coordinates
+#  ${OpenCV_LIBRARIES}
+#)
 
 # Executable: refdet
 add_executable(refdet src/refdet.cpp)
@@ -60,16 +60,16 @@ target_link_libraries(refdet
 # Install executables
 install(
   TARGETS
-    find_block_coordinates
+    #find_block_coordinates
     refdet
   DESTINATION lib/${PROJECT_NAME}
 )
 
 # Generate custom messages
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Coordinates.msg"
-  DEPENDENCIES builtin_interfaces
-)
+#rosidl_generate_interfaces(${PROJECT_NAME}
+#  "msg/Coordinates.msg"
+#  DEPENDENCIES builtin_interfaces
+#)
 
 # Ensure dependencies are exported
 ament_export_dependencies(
