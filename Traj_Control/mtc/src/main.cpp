@@ -1,50 +1,83 @@
 #include "mtc_task.hpp"
 #include <rclcpp/rclcpp.hpp>
+#include <geometry_msgs/msg/pose_array.hpp>
 #include <thread>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+
+class MTCMainNode : public rclcpp::Node
+{
+public:
+  MTCMainNode() : Node("mtc_main_node")
+  {
+    mtc_task_node_ = std::make_shared<MTCTaskNode>(rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+
+    // Subscribers
+    initial_pose_sub_ = this->create_subscription<geometry_msgs::msg::PoseArray>(
+        "/initial_block_poses", 10,
+        std::bind(&MTCMainNode::initialPoseCallback, this, std::placeholders::_1));
+
+    goal_pose_sub_ = this->create_subscription<geometry_msgs::msg::PoseArray>(
+        "/goal_block_poses", 10,
+        std::bind(&MTCMainNode::goalPoseCallback, this, std::placeholders::_1));
+
+    RCLCPP_INFO(this->get_logger(), "Waiting for both initial and goal block poses...");
+  }
+
+  std::shared_ptr<MTCTaskNode> getMtcTaskNode() const
+  {
+    return mtc_task_node_;
+  }
+
+private:
+  void initialPoseCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
+  {
+    initial_poses_ = msg->poses;
+    initial_received_ = true;
+    maybeStartTask();
+  }
+
+  void goalPoseCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
+  {
+    goal_poses_ = msg->poses;
+    goal_received_ = true;
+    maybeStartTask();
+  }
+
+  void maybeStartTask()
+  {
+    if (initial_received_ && goal_received_ && !task_started_)
+    {
+      RCLCPP_INFO(this->get_logger(), "Both pose arrays received. Starting task...");
+
+      mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
+      mtc_task_node_->setupPlanningScene();
+      mtc_task_node_->doTask();
+
+      task_started_ = true;
+    }
+  }
+
+  std::shared_ptr<MTCTaskNode> mtc_task_node_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr initial_pose_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr goal_pose_sub_;
+
+  std::vector<geometry_msgs::msg::Pose> initial_poses_;
+  std::vector<geometry_msgs::msg::Pose> goal_poses_;
+  bool initial_received_ = false;
+  bool goal_received_ = false;
+  bool task_started_ = false;
+};
 
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
-  rclcpp::NodeOptions options;
-  options.automatically_declare_parameters_from_overrides(true);
 
-  auto mtc_task_node = std::make_shared<MTCTaskNode>(options);
-
-  // Example: set new block poses via the setBlockPoses method.
-  // These can be read from user input, a file, or another source.
-  geometry_msgs::msg::Pose initial_pose;
-  initial_pose.position.x = 0.1;
-  initial_pose.position.y = -0.39;
-  initial_pose.position.z = 0.05;
-  initial_pose.orientation.w = 1.0;
-
-  std::vector<geometry_msgs::msg::Pose> initial_poses;
-  initial_poses.push_back(initial_pose);
-
-  geometry_msgs::msg::Pose goal_pose;
-  goal_pose.position.x = 0.35;
-  goal_pose.position.y = 0.25;
-  goal_pose.position.z = 0.05;
-  goal_pose.orientation.w = 1.0;
-
-  std::vector<geometry_msgs::msg::Pose> goal_poses;
-  goal_poses.push_back(goal_pose);
-
-  // Set the new block poses
-  mtc_task_node->setBlockPoses(initial_poses, goal_poses);
+  auto mtc_main_node = std::make_shared<MTCMainNode>();
 
   rclcpp::executors::MultiThreadedExecutor executor;
-  auto spin_thread = std::make_unique<std::thread>([&executor, &mtc_task_node]()
-                                                   {
-      executor.add_node(mtc_task_node->getNodeBaseInterface());
-      executor.spin();
-      executor.remove_node(mtc_task_node->getNodeBaseInterface()); });
+  executor.add_node(mtc_main_node);
+  executor.add_node(mtc_main_node->getMtcTaskNode());
+  executor.spin();
 
-  mtc_task_node->setupPlanningScene();
-  mtc_task_node->doTask();
-
-  spin_thread->join();
   rclcpp::shutdown();
   return 0;
 }
