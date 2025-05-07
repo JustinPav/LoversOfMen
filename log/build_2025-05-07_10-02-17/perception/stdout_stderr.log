@@ -1,0 +1,6 @@
+-- Configuring incomplete, errors occurred!
+[31mCMake Error at CMakeLists.txt:18:
+  Parse error.  Expected a command name, got unquoted argument with text
+  "<<<<<<<".
+
+[0m

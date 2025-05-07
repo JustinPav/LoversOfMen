@@ -1,0 +1,1 @@
+Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/Integration': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Integration -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/Integration

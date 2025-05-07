@@ -1,0 +1,22 @@
+[0.016s] Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/Integration': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Integration -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/Integration
+[0.078s] -- The C compiler identification is GNU 11.4.0
+[0.154s] -- The CXX compiler identification is GNU 11.4.0
+[0.164s] -- Detecting C compiler ABI info
+[0.244s] -- Detecting C compiler ABI info - done
+[0.256s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.256s] -- Detecting C compile features
+[0.257s] -- Detecting C compile features - done
+[0.261s] -- Detecting CXX compiler ABI info
+[0.357s] -- Detecting CXX compiler ABI info - done
+[0.365s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.365s] -- Detecting CXX compile features
+[0.366s] -- Detecting CXX compile features - done
+[0.368s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.569s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.673s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.724s] WARNING: Package name "Integration" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+[0.755s] -- Added test 'lint_cmake' to check CMake code style
+[0.756s] -- Added test 'xmllint' to check XML markup files
+[0.757s] -- Configuring done
+[0.759s] -- Generating done
+[0.762s] -- Build files have been written to: /home/anton/ros2_ws/src/LoversOfMen/build/Integration
