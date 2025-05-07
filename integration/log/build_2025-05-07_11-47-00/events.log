@@ -1,0 +1,67 @@
+[0.000000] (-) TimerEvent: {}
+[0.000528] (integration) JobQueued: {'identifier': 'integration', 'dependencies': OrderedDict()}
+[0.000668] (integration) JobStarted: {'identifier': 'integration'}
+[0.006120] (integration) JobProgress: {'identifier': 'integration', 'progress': 'cmake'}
+[0.006591] (integration) Command: {'cmd': ['/usr/bin/cmake', '/home/anton/ros2_ws/src/LoversOfMen/integration', '-DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/integration/install/integration'], 'cwd': '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'en_AU:en'), ('USER', 'anton'), ('FONTCONFIG_PATH', '/etc/fonts'), ('GIO_MODULE_DIR', '/home/anton/snap/code/common/.cache/gio-modules'), ('XDG_SESSION_TYPE', 'wayland'), ('GIT_ASKPASS', '/snap/code/191/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('GTK_EXE_PREFIX_VSCODE_SNAP_ORIG', ''), ('GDK_BACKEND_VSCODE_SNAP_ORIG', ''), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/anton'), ('CHROME_DESKTOP', 'code.desktop'), ('LOCPATH_VSCODE_SNAP_ORIG', ''), ('OLDPWD', '/home/anton/ros2_ws/src/LoversOfMen'), ('TERM_PROGRAM_VERSION', '1.99.3'), ('DESKTOP_SESSION', 'ubuntu'), ('GTK_PATH', '/snap/code/191/usr/lib/x86_64-linux-gnu/gtk-3.0'), ('XDG_DATA_HOME_VSCODE_SNAP_ORIG', ''), ('GTK_IM_MODULE_FILE', '/home/anton/snap/code/common/.cache/immodules/immodules.cache'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('GSETTINGS_SCHEMA_DIR_VSCODE_SNAP_ORIG', ''), ('VSCODE_GIT_ASKPASS_MAIN', '/snap/code/191/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/snap/code/191/usr/share/code/code'), ('SYSTEMD_EXEC_PID', '1066'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('COLCON_PREFIX_PATH', '/home/anton/ros2_ws/install:/home/anton/ros2_ws/src/LoversOfMen/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'anton'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_CONFIG_DIRS_VSCODE_SNAP_ORIG', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_SESSION_CLASS', 'user'), ('XDG_DATA_DIRS_VSCODE_SNAP_ORIG', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('USERNAME', 'anton'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '1'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/anton/.config/Code/User/globalStorage/github.copilot-chat/debugCommand'), ('SESSION_MANAGER', 'local/anton-Surface-Laptop-3:@/tmp/.ICE-unix/1037,unix/anton-Surface-Laptop-3:/tmp/.ICE-unix/1037'), ('GTK_EXE_PREFIX', '/snap/code/191/usr'), ('XDG_MENU_PREFIX', 'gnome-'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/33bcb483_faf5_42e8_a198_b8059f8c4285'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':0'), ('LOCPATH', '/snap/code/191/usr/lib/locale'), ('LANG', 'en_AU.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('GIO_MODULE_DIR_VSCODE_SNAP_ORIG', ''), ('XDG_DATA_HOME', '/home/anton/snap/code/191/.local/share'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.KEXA62'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-7883568919.sock'), ('GNOME_TERMINAL_SERVICE', ':1.277'), ('TERM_PROGRAM', 'vscode'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('GSETTINGS_SCHEMA_DIR', '/home/anton/snap/code/191/.local/share/glib-2.0/schemas'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GTK_PATH_VSCODE_SNAP_ORIG', ''), ('FONTCONFIG_FILE', '/etc/fonts/fonts.conf'), ('GTK_IM_MODULE_FILE_VSCODE_SNAP_ORIG', ''), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo-11/'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', ''), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/home/anton/snap/code/191/.local/share:/home/anton/snap/code/191:/snap/code/191/usr/share:/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('VTE_VERSION', '6800')]), 'shell': False}
+[0.061222] (integration) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.099837] (-) TimerEvent: {}
+[0.111346] (integration) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.120010] (integration) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.189321] (integration) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.196633] (integration) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.196879] (integration) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.197248] (integration) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.199956] (-) TimerEvent: {}
+[0.200313] (integration) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.276524] (integration) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.283125] (integration) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.283306] (integration) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.283692] (integration) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.285793] (integration) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.300069] (-) TimerEvent: {}
+[0.400352] (-) TimerEvent: {}
+[0.435750] (integration) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.500525] (-) TimerEvent: {}
+[0.531583] (integration) StdoutLine: {'line': b'-- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.568045] (integration) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.573437] (integration) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.585012] (integration) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.600598] (-) TimerEvent: {}
+[0.605010] (integration) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.622907] (integration) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.667009] (integration) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.669113] (integration) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.700691] (-) TimerEvent: {}
+[0.749585] (integration) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.773109] (integration) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.800803] (-) TimerEvent: {}
+[0.809122] (integration) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.817398] (integration) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[0.890187] (integration) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[0.890637] (integration) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[0.900921] (-) TimerEvent: {}
+[0.960575] (integration) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[0.961779] (integration) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[1.001045] (-) TimerEvent: {}
+[1.013781] (integration) StderrLine: {'line': b'\x1b[31mCMake Error at CMakeLists.txt:11 (find_package):\n'}
+[1.013988] (integration) StderrLine: {'line': b'  By not providing "Findcustom_msgs.cmake" in CMAKE_MODULE_PATH this project\n'}
+[1.014077] (integration) StderrLine: {'line': b'  has asked CMake to find a package configuration file provided by\n'}
+[1.014150] (integration) StderrLine: {'line': b'  "custom_msgs", but CMake did not find one.\n'}
+[1.014221] (integration) StderrLine: {'line': b'\n'}
+[1.014290] (integration) StderrLine: {'line': b'  Could not find a package configuration file provided by "custom_msgs" with\n'}
+[1.014361] (integration) StderrLine: {'line': b'  any of the following names:\n'}
+[1.014439] (integration) StderrLine: {'line': b'\n'}
+[1.014516] (integration) StderrLine: {'line': b'    custom_msgsConfig.cmake\n'}
+[1.014594] (integration) StderrLine: {'line': b'    custom_msgs-config.cmake\n'}
+[1.014670] (integration) StderrLine: {'line': b'\n'}
+[1.014746] (integration) StderrLine: {'line': b'  Add the installation prefix of "custom_msgs" to CMAKE_PREFIX_PATH or set\n'}
+[1.014823] (integration) StderrLine: {'line': b'  "custom_msgs_DIR" to a directory containing one of the above files.  If\n'}
+[1.014900] (integration) StderrLine: {'line': b'  "custom_msgs" provides a separate development package or SDK, be sure it\n'}
+[1.014976] (integration) StderrLine: {'line': b'  has been installed.\n'}
+[1.015052] (integration) StderrLine: {'line': b'\n'}
+[1.015123] (integration) StderrLine: {'line': b'\x1b[0m\n'}
+[1.015193] (integration) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[1.015271] (integration) StdoutLine: {'line': b'See also "/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration/CMakeFiles/CMakeOutput.log".\n'}
+[1.023802] (integration) CommandEnded: {'returncode': 1}
+[1.024352] (integration) JobEnded: {'identifier': 'integration', 'rc': 1}
+[1.034088] (-) EventReactorShutdown: {}

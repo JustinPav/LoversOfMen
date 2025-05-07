@@ -1,0 +1,23 @@
+[0.009s] Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration': /usr/bin/cmake --build /home/anton/ros2_ws/src/LoversOfMen/integration/build/integration -- -j8 -l8
+[0.048s] [35m[1mConsolidate compiler generated dependencies of target coordinates_publisher[0m
+[0.067s] [100%] Built target coordinates_publisher
+[0.079s] Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration' returned '0': /usr/bin/cmake --build /home/anton/ros2_ws/src/LoversOfMen/integration/build/integration -- -j8 -l8
+[0.089s] Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration': /usr/bin/cmake --install /home/anton/ros2_ws/src/LoversOfMen/integration/build/integration
+[0.096s] -- Install configuration: ""
+[0.096s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/lib/integration/coordinates_publisher
+[0.096s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/ament_index/resource_index/package_run_dependencies/integration
+[0.096s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/ament_index/resource_index/parent_prefix_path/integration
+[0.096s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/environment/ament_prefix_path.sh
+[0.096s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/environment/ament_prefix_path.dsv
+[0.096s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/environment/path.sh
+[0.097s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/environment/path.dsv
+[0.097s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/local_setup.bash
+[0.097s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/local_setup.sh
+[0.097s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/local_setup.zsh
+[0.097s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/local_setup.dsv
+[0.097s] -- Installing: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/package.dsv
+[0.097s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/ament_index/resource_index/packages/integration
+[0.097s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/cmake/integrationConfig.cmake
+[0.097s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/cmake/integrationConfig-version.cmake
+[0.098s] -- Up-to-date: /home/anton/ros2_ws/src/LoversOfMen/integration/install/integration/share/integration/package.xml
+[0.099s] Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration' returned '0': /usr/bin/cmake --install /home/anton/ros2_ws/src/LoversOfMen/integration/build/integration
