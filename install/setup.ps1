@@ -22,6 +22,7 @@ function _colcon_prefix_chain_powershell_source_script {
 }
 
 # source chained prefixes
+_colcon_prefix_chain_powershell_source_script "/home/anton/ros2_ws/src/LoversOfMen/integration/install\local_setup.ps1"
 _colcon_prefix_chain_powershell_source_script "/home/anton/ros2_ws/install\local_setup.ps1"
 
 # source this prefix
