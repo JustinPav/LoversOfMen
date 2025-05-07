@@ -37,14 +37,17 @@ private:
 
   void goalPoseCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
   {
-    goal_poses_ = msg->poses;
-    goal_received_ = true;
+    if (!goal_received_)
+    {
+      goal_poses_ = msg->poses;
+      goal_received_ = true;
+    }
     maybeStartTask();
   }
 
   void maybeStartTask()
   {
-    if (initial_received_ && goal_received_ && !task_started_)
+    if (initial_received_ && goal_received_ && !task_finished_)
     {
       RCLCPP_INFO(this->get_logger(), "Both pose arrays received. Starting task...");
 
@@ -52,7 +55,17 @@ private:
       mtc_task_node_->setupPlanningScene();
       mtc_task_node_->doTask();
 
-      task_started_ = true;
+      if (goal_poses_.empty())
+      {
+        RCLCPP_INFO(this->get_logger(), "No goal poses remaining. Task finished.");
+        task_finished_ = true;
+      }
+      else
+      {
+        // Remove the first goal pose from the list
+        goal_poses_.erase(goal_poses_.begin());
+        RCLCPP_INFO(this->get_logger(), "Goal Pose achieved. %i poses remaining.", static_cast<int>(goal_poses_.size()));
+      }
     }
   }
 
@@ -64,7 +77,7 @@ private:
   std::vector<geometry_msgs::msg::Pose> goal_poses_;
   bool initial_received_ = false;
   bool goal_received_ = false;
-  bool task_started_ = false;
+  bool task_finished_ = false;
 };
 
 int main(int argc, char **argv)
