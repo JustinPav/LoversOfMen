@@ -7,163 +7,184 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <geometry_msgs/msg/point_stamped.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
-#include "perception/msg/coordinates.hpp" // Include the custom message
-
 
 class ObjectDetectionNode : public rclcpp::Node {
 public:
   ObjectDetectionNode()
   : Node("object_detection_node")
   {
-    // 1) Declare & read the reference-image path
-    this->declare_parameter<std::string>("ref_image_path", "");
-    ref_path_ = this->get_parameter("ref_image_path").as_string();
+    // --- PARAMETERS ---
+    declare_parameter<std::string>("ref_image_path", "");
+    declare_parameter<double>("area_min_scale", 0.2);
+    declare_parameter<double>("area_max_scale", 5.0);
+    declare_parameter<double>("shape_score_threshold", 1.0);
+
+    ref_path_ = get_parameter("ref_image_path").as_string();
+    area_min_scale_ = get_parameter("area_min_scale").as_double();
+    area_max_scale_ = get_parameter("area_max_scale").as_double();
+    shape_score_threshold_ = get_parameter("shape_score_threshold").as_double();
 
     if (ref_path_.empty()) {
       RCLCPP_FATAL(get_logger(),
-        "Parameter 'ref_image_path' is empty. Pass it via -p ref_image_path:=/full/path.jpg");
+        "ref_image_path is empty. Pass with '-p ref_image_path:=/full/path.png'");
       rclcpp::shutdown();
       return;
     }
 
-    // 2) Load & preprocess reference image
-    RCLCPP_INFO(get_logger(), "Loading reference image from: %s", ref_path_.c_str());
+    // --- LOAD & PREPROCESS REFERENCE ---
     cv::Mat ref_gray = cv::imread(ref_path_, cv::IMREAD_GRAYSCALE);
     if (ref_gray.empty()) {
-      RCLCPP_FATAL(get_logger(), "Failed to load reference image");
+      RCLCPP_FATAL(get_logger(), "Failed to load reference '%s'", ref_path_.c_str());
       rclcpp::shutdown();
       return;
     }
-    cv::GaussianBlur(ref_gray, ref_gray, cv::Size(7,7), 1.5);
+    cv::GaussianBlur(ref_gray, ref_gray, {7,7}, 1.5);
     cv::threshold(ref_gray, ref_mask_, 128, 255, cv::THRESH_BINARY);
 
-    // 3) Extract main contour from reference
+    // Extract its largest contour
     {
-      std::vector<std::vector<cv::Point>> ref_contours;
-      cv::findContours(ref_mask_, ref_contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-      if (ref_contours.empty()) {
-        RCLCPP_FATAL(get_logger(), "No contours found in reference image");
+      std::vector<std::vector<cv::Point>> tmp;
+      cv::findContours(ref_mask_, tmp, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+      if (tmp.empty()) {
+        RCLCPP_FATAL(get_logger(), "No contour found in reference image");
         rclcpp::shutdown();
         return;
       }
-      auto largest = std::max_element(
-        ref_contours.begin(), ref_contours.end(),
-        [](auto &a, auto &b){ return cv::contourArea(a) < cv::contourArea(b); }
-      );
-      ref_contour_ = *largest;
+      auto it = std::max_element(
+        tmp.begin(), tmp.end(),
+        [](auto &a, auto &b){ return cv::contourArea(a) < cv::contourArea(b); });
+      ref_contour_ = *it;
+      ref_area_ = cv::contourArea(ref_contour_);
       RCLCPP_INFO(get_logger(),
-        "Reference contour loaded (area=%.1f)", cv::contourArea(ref_contour_));
+        "Loaded reference contour (area=%.1f)", ref_area_);
     }
 
-    // 4) Set up blob detector (optional)
-    cv::SimpleBlobDetector::Params params;
-    params.filterByArea = true;
-    params.minArea = 200.0f;
-    params.maxArea = 50000.0f;
-    blob_detector_ = cv::SimpleBlobDetector::create(params);
+    // --- ROS 2 PUBLISHERS & SUBSCRIBER ---
+    image_pub_ = create_publisher<sensor_msgs::msg::Image>(
+      "detection/image", rclcpp::QoS(10).reliable());
+    center_pub_ = create_publisher<geometry_msgs::msg::PointStamped>(
+      "detection/center", rclcpp::QoS(10).reliable());
 
-    // 5) Create display windows (optional)
-    cv::namedWindow("Detection", cv::WINDOW_AUTOSIZE);
-    cv::namedWindow("Mask",      cv::WINDOW_AUTOSIZE);
-    cv::startWindowThread();
-
-    // 6) Publisher for annotated images (now RELIABLE)
-    image_pub_ = this->create_publisher<sensor_msgs::msg::Image>(
-      "detection/image",
-      rclcpp::QoS(10).reliable()
-    );
-
-    // 7) Subscribe to the color image topic
-    RCLCPP_INFO(get_logger(), "Subscribing to /camera/color/image_raw");
-    image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
+    image_sub_ = create_subscription<sensor_msgs::msg::Image>(
       "/camera/camera/infra1/image_rect_raw",
       rclcpp::SensorDataQoS(),
-      std::bind(&ObjectDetectionNode::imageCallback, this, std::placeholders::_1)
-    );
+      std::bind(&ObjectDetectionNode::imageCallback, this,
+                std::placeholders::_1));
+
+    RCLCPP_INFO(get_logger(), "Node initialized. Waiting for images...");
   }
 
 private:
-  void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr & msg) {
-    // Convert ROS image to OpenCV BGR
+  void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr& msg) {
+    // --- A) Convert to OpenCV BGR ---
     cv::Mat frame;
     try {
       frame = cv_bridge::toCvCopy(msg, "bgr8")->image;
-    } catch (const cv_bridge::Exception &e) {
-      RCLCPP_ERROR(get_logger(), "cv_bridge error: %s", e.what());
+    } catch (const cv_bridge::Exception& e) {
+      RCLCPP_ERROR(get_logger(), "cv_bridge exception: %s", e.what());
       return;
     }
     if (frame.empty()) {
-      RCLCPP_WARN(get_logger(), "Empty frame received");
+      RCLCPP_WARN(get_logger(), "Empty frame");
       return;
     }
 
-    // Preprocess: gray, blur, threshold
-    cv::Mat gray, blurred, mask;
+    // --- B) Preprocess to binary mask ---
+    cv::Mat gray, blur, mask;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-    cv::GaussianBlur(gray, blurred, cv::Size(7,7), 1.5);
-    cv::threshold(blurred, mask, 128, 255, cv::THRESH_BINARY_INV);
+    cv::GaussianBlur(gray, blur, {7,7}, 1.5);
+    cv::threshold(blur, mask, 128, 255, cv::THRESH_BINARY_INV);
 
-    // 1) Shape matching: find only the best contour match
+    // --- C) Find contours & score them ---
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+    RCLCPP_DEBUG(get_logger(), "Found %zu contours", contours.size());
 
-    double best_score = std::numeric_limits<double>::max();
+    double best_score = std::numeric_limits<double>::infinity();
     std::vector<cv::Point> best_contour;
-    for (auto &cnt : contours) {
-      double area = cv::contourArea(cnt);
-      if (area < 500.0) continue;  // skip small noise
-      double score = cv::matchShapes(cnt, ref_contour_, cv::CONTOURS_MATCH_I1, 0.0);
+    double best_area = 0.0;
+
+    for (auto &c : contours) {
+      double area = cv::contourArea(c);
+      if (area < area_min_scale_ * ref_area_ ||
+          area > area_max_scale_ * ref_area_) {
+        RCLCPP_DEBUG(get_logger(),
+          " Skip contour area=%.1f outside [%.1f,%.1f]×ref_area",
+          area, area_min_scale_, area_max_scale_);
+        continue;
+      }
+      // approximate for smoother matching
+      std::vector<cv::Point> approx;
+      cv::approxPolyDP(c, approx, 0.01 * cv::arcLength(c, true), true);
+      double score = cv::matchShapes(approx, ref_contour_,
+                                     cv::CONTOURS_MATCH_I1, 0.0);
+      RCLCPP_DEBUG(get_logger(),
+        " Contour area=%.1f score=%.4f", area, score);
       if (score < best_score) {
         best_score = score;
-        best_contour = cnt;
+        best_contour = std::move(approx);
+        best_area = area;
       }
     }
 
-    // Draw the best match (if any)
-    if (!best_contour.empty()) {
+    RCLCPP_INFO(get_logger(),
+      "Best contour score=%.4f area=%.1f", best_score, best_area);
+
+    // --- D) Draw & publish only if below threshold ---
+    if (!best_contour.empty() && best_score <= shape_score_threshold_) {
       std::vector<cv::Point> hull;
       cv::convexHull(best_contour, hull);
-      cv::polylines(frame, hull, true, cv::Scalar(0,255,0), 2);
-      RCLCPP_DEBUG(get_logger(), "Best match score: %.3f", best_score);
+      cv::polylines(frame, hull, true, {0,255,0}, 2);
+
+      // compute & publish center
+      cv::Moments m = cv::moments(best_contour);
+      double cx = m.m10 / m.m00;
+      double cy = m.m01 / m.m00;
+      cv::circle(frame, {int(cx),int(cy)}, 4, {255,0,0}, -1);
+
+      geometry_msgs::msg::PointStamped pt;
+      pt.header = msg->header;
+      pt.point.x = cx;
+      pt.point.y = cy;
+      pt.point.z = 0.0;
+      center_pub_->publish(pt);
+    } else {
+      RCLCPP_WARN_THROTTLE(
+        get_logger(), *get_clock(), 2000,
+        "No contour passed shape_score_threshold=%.3f", shape_score_threshold_);
     }
 
-    // 2) Blob detection (optional)
-    std::vector<cv::KeyPoint> keypoints;
-    blob_detector_->detect(mask, keypoints);
-    cv::drawKeypoints(frame, keypoints, frame,
-                      cv::Scalar(0,0,255),
-                      cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-    // 3) Convert BGR -> RGB for RViz
-    cv::Mat rgb_frame;
-    cv::cvtColor(frame, rgb_frame, cv::COLOR_BGR2RGB);
-
-    // 4) Publish annotated image as "rgb8"
-    auto out_msg = cv_bridge::CvImage(msg->header, "rgb8", rgb_frame).toImageMsg();
-    image_pub_->publish(*out_msg);
-
-    // 5) Show windows (optional)
+    // --- E) Publish annotated frame for RViz ---
+    cv::Mat rgb;
+    cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
+    auto out = cv_bridge::CvImage(msg->header, "rgb8", rgb).toImageMsg();
+    image_pub_->publish(*out);
     cv::imshow("Mask",      mask);
     cv::imshow("Detection", frame);
     cv::waitKey(1);
   }
 
-  // Members
+  // parameters
   std::string ref_path_;
-  cv::Mat ref_mask_;
-  std::vector<cv::Point> ref_contour_;
-  cv::Ptr<cv::SimpleBlobDetector> blob_detector_;
+  double      area_min_scale_, area_max_scale_, shape_score_threshold_;
 
-  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr    image_pub_;
+  // reference data
+  cv::Mat                   ref_mask_;
+  std::vector<cv::Point>    ref_contour_;
+  double                    ref_area_{0.0};
+
+  // ROS interfaces
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr  image_sub_;
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr     image_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr center_pub_;
 };
 
-int main(int argc, char ** argv) {
+int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<ObjectDetectionNode>();
-  rclcpp::spin(node);
+  rclcpp::spin(std::make_shared<ObjectDetectionNode>());
   rclcpp::shutdown();
   return 0;
 }
