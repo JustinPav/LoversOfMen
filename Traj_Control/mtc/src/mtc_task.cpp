@@ -66,9 +66,9 @@ std::vector<moveit_msgs::msg::CollisionObject> MTCTaskNode::createCollisionObjec
         primitive.type = primitive.BOX;
         primitive.dimensions.resize(3);
         // 50 mm cube (0.05 m per side)
-        primitive.dimensions[0] = 0.05;
-        primitive.dimensions[1] = 0.05;
-        primitive.dimensions[2] = 0.05;
+        primitive.dimensions[0] = 0.04;
+        primitive.dimensions[1] = 0.04;
+        primitive.dimensions[2] = 0.04;
 
         geometry_msgs::msg::Pose cube_pose = waypoints[i];
 
@@ -148,10 +148,7 @@ mtc::Task MTCTaskNode::createTask()
     double vel = 1.0;
 
     // Stage 1: Current state
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     mtc::Stage *current_state_ptr = nullptr; // Forward current_state on to grasp pose generator
-#pragma GCC diagnostic pop
 
     auto stage_current = std::make_unique<mtc::stages::CurrentState>("current state");
     current_state_ptr = stage_current.get();
@@ -250,7 +247,7 @@ mtc::Task MTCTaskNode::createTask()
                                    Eigen::AngleAxisd(0, Eigen::Vector3d::UnitY()) *
                                    Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ());
             grasp_frame_transform.linear() = q.matrix();
-            grasp_frame_transform.translation().z() = 0.23;
+            grasp_frame_transform.translation().z() = 0.20;
 
             // Compute IK
 
