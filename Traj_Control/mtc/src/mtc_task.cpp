@@ -42,9 +42,6 @@ void MTCTaskNode::setBlockPoses(const std::vector<geometry_msgs::msg::Pose> &ini
         goal_ref.orientation = goal.orientation;
         goal_locations_.push_back(goal_ref);
     }
-
-    current_box_pose_ = block_locations_.front();
-    current_goal_pose_ = goal_locations_.front();
 }
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr MTCTaskNode::getNodeBaseInterface()
@@ -81,12 +78,17 @@ std::vector<moveit_msgs::msg::CollisionObject> MTCTaskNode::createCollisionObjec
     return collision_objects;
 }
 
-void MTCTaskNode::setupPlanningScene(int current_goal)
+void MTCTaskNode::setupPlanningScene()
 {
-    current_box_name_ = "cube_" + std::to_string(current_goal);
     auto collision_objects = createCollisionObjects(block_locations_, "world");
     planning_scene_interface_.applyCollisionObjects(collision_objects);
     RCLCPP_INFO(this->get_logger(), "Added %zu collision objects to the planning scene.", collision_objects.size());
+}
+
+void MTCTaskNode::setCurrentGoal(int current_goal)
+{
+    current_box_name_ = "cube_" + std::to_string(current_goal);
+    current_goal_pose_ = goal_locations_.at(current_goal);
 }
 
 void MTCTaskNode::doTask()
@@ -104,7 +106,7 @@ void MTCTaskNode::doTask()
     }
 
     // Plan the task
-    if (!task_.plan(15))
+    if (!task_.plan(5))
     {
         RCLCPP_ERROR(this->get_logger(), "Task planning failed");
         return;
@@ -248,7 +250,7 @@ mtc::Task MTCTaskNode::createTask()
                                    Eigen::AngleAxisd(0, Eigen::Vector3d::UnitY()) *
                                    Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ());
             grasp_frame_transform.linear() = q.matrix();
-            grasp_frame_transform.translation().z() = 0.20;
+            grasp_frame_transform.translation().z() = 0.21;
 
             // Compute IK
 

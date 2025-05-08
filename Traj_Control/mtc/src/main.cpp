@@ -32,6 +32,9 @@ private:
   {
     initial_poses_ = msg->poses;
     initial_received_ = true;
+    mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
+    mtc_task_node_->setupPlanningScene();
+    RCLCPP_INFO(this->get_logger(), "Received %i block poses.", static_cast<int>(initial_poses_.size()));
     maybeStartTask();
   }
 
@@ -42,7 +45,11 @@ private:
       goal_poses_ = msg->poses;
       goal_received_ = true;
       total_no_of_goals_ = static_cast<int>(goal_poses_.size());
-      mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
+      if (initial_received_)
+      {
+        mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
+        mtc_task_node_->setupPlanningScene();
+      }
       RCLCPP_INFO(this->get_logger(), "Received %i goal poses.", total_no_of_goals_);
     }
     maybeStartTask();
@@ -52,12 +59,14 @@ private:
   {
     if (initial_received_ && goal_received_ && !task_finished_)
     {
+
       while (!task_finished_)
       {
         RCLCPP_INFO(this->get_logger(), "Both pose arrays received. Starting task...");
 
         int current_goal = total_no_of_goals_ - static_cast<int>(goal_poses_.size());
-        mtc_task_node_->setupPlanningScene(current_goal);
+        RCLCPP_INFO(this->get_logger(), "Current goal index: %i", current_goal);
+        mtc_task_node_->setCurrentGoal(current_goal);
         mtc_task_node_->doTask();
 
         // Remove the first goal pose from the list

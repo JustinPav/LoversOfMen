@@ -22,7 +22,10 @@ public:
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr getNodeBaseInterface();
 
   // Setup the planning scene (e.g., add boxes at pickup locations)
-  void setupPlanningScene(int current_goal);
+  void setupPlanningScene();
+
+  // Set the current goal index and update the block name and pose.
+  void setCurrentGoal(int current_goal);
 
   // Execute the pick and place task organized into stages.
   void doTask();

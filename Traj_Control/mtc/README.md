@@ -26,20 +26,12 @@ ros2 launch ur3e_rg2_moveit_config ur_onrobot_moveit.launch.py ur_type:=ur3e onr
 ```bash
 ros2 launch mtc mtc.launch.py ur_type:=ur3e onrobot_type:=rg2
 ```
-Publish Block Poses
-In a new terminal, publish the goal block poses:
-```bash
-ros2 topic pub /goal_block_poses geometry_msgs/msg/PoseArray "poses:
-- position: {x: 0.20, y: 0.35, z: 0.025}
-  orientation: {w: 1.0}
-- position: {x: 0.26, y: 0.35, z: 0.025}
-  orientation: {w: 1.0}"
-```
+## Publish Block Poses
 
-Then, publish the initial block poses:
+In a new terminal, publish the initial block poses:
 ```bash
 ros2 topic pub /initial_block_poses geometry_msgs/msg/PoseArray "poses:
-- position: {x: 0.2, y: -0.27, z: 0.025}
+- position: {x: 0.2, y: -0.20, z: 0.025}
   orientation: {w: 1.0}
 - position: {x: 0.31, y: -0.29, z: 0.025}
   orientation: {w: 1.0}
@@ -48,6 +40,21 @@ ros2 topic pub /initial_block_poses geometry_msgs/msg/PoseArray "poses:
 - position: {x: 0.16, y: -0.42, z: 0.025}
   orientation: {w: 1.0}"
 ```
+
+Then, publish the goal block poses:
+```bash
+ros2 topic pub /goal_block_poses geometry_msgs/msg/PoseArray "poses:
+- position: {x: 0.14, y: 0.35, z: 0.025}
+  orientation: {w: 1.0}
+- position: {x: 0.20, y: 0.35, z: 0.025}
+  orientation: {w: 1.0}
+- position: {x: 0.26, y: 0.35, z: 0.025}
+  orientation: {w: 1.0}
+- position: {x: 0.32, y: 0.35, z: 0.025}
+  orientation: {w: 1.0}"
+```
+
+
 
 ## Notes
 - The initial block poses are positioned in front of the robot (along +X) within a 0.4m radius.
