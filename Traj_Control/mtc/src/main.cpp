@@ -41,6 +41,9 @@ private:
     {
       goal_poses_ = msg->poses;
       goal_received_ = true;
+      total_no_of_goals_ = static_cast<int>(goal_poses_.size());
+      mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
+      RCLCPP_INFO(this->get_logger(), "Received %i goal poses.", total_no_of_goals_);
     }
     maybeStartTask();
   }
@@ -49,22 +52,23 @@ private:
   {
     if (initial_received_ && goal_received_ && !task_finished_)
     {
-      RCLCPP_INFO(this->get_logger(), "Both pose arrays received. Starting task...");
-
-      mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
-      mtc_task_node_->setupPlanningScene();
-      mtc_task_node_->doTask();
-
-      if (goal_poses_.empty())
+      while (!task_finished_)
       {
-        RCLCPP_INFO(this->get_logger(), "No goal poses remaining. Task finished.");
-        task_finished_ = true;
-      }
-      else
-      {
+        RCLCPP_INFO(this->get_logger(), "Both pose arrays received. Starting task...");
+
+        int current_goal = total_no_of_goals_ - static_cast<int>(goal_poses_.size());
+        mtc_task_node_->setupPlanningScene(current_goal);
+        mtc_task_node_->doTask();
+
         // Remove the first goal pose from the list
         goal_poses_.erase(goal_poses_.begin());
         RCLCPP_INFO(this->get_logger(), "Goal Pose achieved. %i poses remaining.", static_cast<int>(goal_poses_.size()));
+
+        if (goal_poses_.empty())
+        {
+          RCLCPP_INFO(this->get_logger(), "No goal poses remaining. Task finished.");
+          task_finished_ = true;
+        }
       }
     }
   }
@@ -78,6 +82,7 @@ private:
   bool initial_received_ = false;
   bool goal_received_ = false;
   bool task_finished_ = false;
+  int total_no_of_goals_ = 0;
 };
 
 int main(int argc, char **argv)
