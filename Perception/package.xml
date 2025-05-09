@@ -1,19 +1,26 @@
 <?xml version="1.0"?>
 <package format="3">
-    <name>perception</name>
-    <version>0.0.0</version>
-    <description>Perception package</description>
-    <maintainer email="your_email@example.com">Your Name</maintainer>
-    <license>Apache-2.0</license>
+  <name>perception</name>
+  <version>0.1.0</version>
+  <description>
+    A ROS 2 node for shape‐based object detection using OpenCV and cv_bridge.
+  </description>
 
-    <buildtool_depend>ament_cmake</buildtool_depend>
-    <buildtool_depend>rosidl_default_generators</buildtool_depend>
-    
-    <build_depend>rosidl_default_generators</build_depend>
-    <build_depend>builtin_interfaces</build_depend>
+  <maintainer email="alexander.vergara@example.com">Alexander Vergara</maintainer>
+  <license>Apache-2.0</license>
 
-    <exec_depend>rosidl_default_runtime</exec_depend>
-    <exec_depend>builtin_interfaces</exec_depend>
+  <!-- build tool -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-    <member_of_group>rosidl_interface_packages</member_of_group>
+  <!-- dependencies -->
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>cv_bridge</depend>
+
+  <!-- OpenCV is pulled in by cv_bridge via CMake -->
+  
+  <export>
+    <build_type>ament_cmake</build_type><!-- Other tools can request information here -->
+  </export>
 </package>

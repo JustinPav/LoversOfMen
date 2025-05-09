@@ -1,1 +1,1 @@
-OpenCV:cv_bridge:image_transport:rclcpp:sensor_msgs
+cv_bridge:geometry_msgs:rclcpp:sensor_msgs
