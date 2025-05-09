@@ -1,0 +1,51 @@
+[0.016s] Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/test': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Traj_Control/test -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/test
+[0.073s] -- The C compiler identification is GNU 11.4.0
+[0.145s] -- The CXX compiler identification is GNU 11.4.0
+[0.153s] -- Detecting C compiler ABI info
+[0.232s] -- Detecting C compiler ABI info - done
+[0.242s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.242s] -- Detecting C compile features
+[0.243s] -- Detecting C compile features - done
+[0.247s] -- Detecting CXX compiler ABI info
+[0.348s] -- Detecting CXX compiler ABI info - done
+[0.362s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.362s] -- Detecting CXX compile features
+[0.363s] -- Detecting CXX compile features - done
+[0.365s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.560s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.651s] -- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)
+[0.700s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.706s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.717s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.736s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.755s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.794s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.796s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.870s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[0.892s] -- Found FastRTPS: /opt/ros/humble/include  
+[0.926s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.932s] -- Looking for pthread.h
+[0.991s] -- Looking for pthread.h - found
+[0.991s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.051s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[1.052s] -- Found Threads: TRUE  
+[1.095s] -- Found trajectory_msgs: 4.8.0 (/opt/ros/humble/share/trajectory_msgs/cmake)
+[1.127s] [31mCMake Error at CMakeLists.txt:13 (find_package):
+[1.127s]   By not providing "Findmoveit_core.cmake" in CMAKE_MODULE_PATH this project
+[1.127s]   has asked CMake to find a package configuration file provided by
+[1.127s]   "moveit_core", but CMake did not find one.
+[1.127s] 
+[1.127s]   Could not find a package configuration file provided by "moveit_core" with
+[1.127s]   any of the following names:
+[1.128s] 
+[1.128s]     moveit_coreConfig.cmake
+[1.128s]     moveit_core-config.cmake
+[1.128s] 
+[1.128s]   Add the installation prefix of "moveit_core" to CMAKE_PREFIX_PATH or set
+[1.128s]   "moveit_core_DIR" to a directory containing one of the above files.  If
+[1.128s]   "moveit_core" provides a separate development package or SDK, be sure it
+[1.128s]   has been installed.
+[1.128s] 
+[1.128s] [0m
+[1.128s] -- Configuring incomplete, errors occurred!
+[1.128s] See also "/home/anton/ros2_ws/src/LoversOfMen/build/test/CMakeFiles/CMakeOutput.log".

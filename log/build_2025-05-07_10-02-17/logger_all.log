@@ -1,0 +1,295 @@
+[0.083s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.083s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x717e16e54700>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x717e16e54250>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x717e16e54250>>, mixin_verb=('build',))
+[0.212s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.212s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.213s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.213s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.213s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.213s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.213s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/anton/ros2_ws/src/LoversOfMen'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extensions ['ignore']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extension 'ignore'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extensions ['colcon_pkg']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extension 'colcon_pkg'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extensions ['colcon_meta']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extension 'colcon_meta'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extensions ['cmake', 'python']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extension 'cmake'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Integration) by extension 'python'
+[0.215s] DEBUG:colcon.colcon_core.package_identification:Package 'Integration' with type 'cmake' and name 'Integration'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extensions ['ignore']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extension 'ignore'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extensions ['colcon_pkg']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extension 'colcon_pkg'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extensions ['colcon_meta']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extension 'colcon_meta'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extensions ['cmake', 'python']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extension 'cmake'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Perception) by extension 'python'
+[0.230s] DEBUG:colcon.colcon_core.package_identification:Package 'Perception' with type 'cmake' and name 'perception'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extensions ['ignore']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extension 'ignore'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extensions ['colcon_pkg']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extension 'colcon_pkg'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extensions ['colcon_meta']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extension 'colcon_meta'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extensions ['cmake', 'python']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extension 'cmake'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extension 'python'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extensions ['python_setup_py']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control) by extension 'python_setup_py'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extensions ['ignore']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extension 'ignore'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extensions ['colcon_pkg']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extension 'colcon_pkg'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extensions ['colcon_meta']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extension 'colcon_meta'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extensions ['cmake', 'python']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extension 'cmake'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/mtc) by extension 'python'
+[0.231s] DEBUG:colcon.colcon_core.package_identification:Package 'Traj_Control/mtc' with type 'cmake' and name 'mtc'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extensions ['ignore']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extension 'ignore'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extensions ['colcon_pkg']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extension 'colcon_pkg'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extensions ['colcon_meta']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extension 'colcon_meta'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extensions ['cmake', 'python']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extension 'cmake'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/test) by extension 'python'
+[0.232s] DEBUG:colcon.colcon_core.package_identification:Package 'Traj_Control/test' with type 'cmake' and name 'test'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extensions ['ignore']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extension 'ignore'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extensions ['colcon_pkg']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extension 'colcon_pkg'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extensions ['colcon_meta']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extension 'colcon_meta'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extensions ['cmake', 'python']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extension 'cmake'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_control) by extension 'python'
+[0.232s] DEBUG:colcon.colcon_core.package_identification:Package 'Traj_Control/ur3e_rg2_control' with type 'cmake' and name 'ur3e_rg2_control'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extensions ['ignore']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extension 'ignore'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extensions ['colcon_pkg']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extension 'colcon_pkg'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extensions ['colcon_meta']
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extension 'colcon_meta'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extensions ['cmake', 'python']
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extension 'cmake'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_description) by extension 'python'
+[0.233s] DEBUG:colcon.colcon_core.package_identification:Package 'Traj_Control/ur3e_rg2_description' with type 'cmake' and name 'ur3e_rg2_description'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extensions ['ignore']
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extension 'ignore'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extensions ['colcon_pkg']
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extension 'colcon_pkg'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extensions ['colcon_meta']
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extension 'colcon_meta'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extensions ['cmake', 'python']
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extension 'cmake'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(Traj_Control/ur3e_rg2_moveit_config) by extension 'python'
+[0.233s] DEBUG:colcon.colcon_core.package_identification:Package 'Traj_Control/ur3e_rg2_moveit_config' with type 'cmake' and name 'ur3e_rg2_moveit_config'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore']
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extensions ['ignore']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extension 'ignore'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extensions ['colcon_pkg']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extension 'colcon_pkg'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extensions ['colcon_meta']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extension 'colcon_meta'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extensions ['cmake', 'python']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extension 'cmake'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extension 'python'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extensions ['python_setup_py']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui) by extension 'python_setup_py'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extensions ['ignore']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extension 'ignore'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extensions ['colcon_pkg']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extension 'colcon_pkg'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extensions ['colcon_meta']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extension 'colcon_meta'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extensions ['cmake', 'python']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extension 'cmake'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extension 'python'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extensions ['python_setup_py']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src) by extension 'python_setup_py'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extensions ['ignore']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extension 'ignore'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extensions ['colcon_pkg']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extension 'colcon_pkg'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extensions ['colcon_meta']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extension 'colcon_meta'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extensions ['cmake', 'python']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extension 'cmake'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extension 'python'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extensions ['python_setup_py']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/controllers) by extension 'python_setup_py'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extensions ['ignore']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extension 'ignore'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extensions ['colcon_pkg']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extension 'colcon_pkg'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extensions ['colcon_meta']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extension 'colcon_meta'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extensions ['cmake', 'python']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extension 'cmake'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extension 'python'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extensions ['python_setup_py']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui) by extension 'python_setup_py'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extensions ['ignore']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extension 'ignore'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extensions ['colcon_pkg']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extension 'colcon_pkg'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extensions ['colcon_meta']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extension 'colcon_meta'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extensions ['cmake', 'python']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extension 'cmake'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extension 'python'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extensions ['python_setup_py']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/gui/__pycache__) by extension 'python_setup_py'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extensions ['ignore']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extension 'ignore'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extensions ['colcon_pkg']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extension 'colcon_pkg'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extensions ['colcon_meta']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extension 'colcon_meta'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extensions ['cmake', 'python']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extension 'cmake'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extension 'python'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extensions ['python_setup_py']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/services) by extension 'python_setup_py'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extensions ['ignore']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extension 'ignore'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extensions ['colcon_pkg']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extension 'colcon_pkg'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extensions ['colcon_meta']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extension 'colcon_meta'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extensions ['cmake', 'python']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extension 'cmake'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extension 'python'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extensions ['python_setup_py']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(ur3-realsense-gui/src/utils) by extension 'python_setup_py'
+[0.236s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.236s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.236s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.236s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.236s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.252s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.252s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.253s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 0 installed packages in /home/anton/ros2_ws/install
+[0.253s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.253s] Level 5:colcon.colcon_core.verb:set package 'Integration' build argument 'cmake_args' from command line to 'None'
+[0.253s] Level 5:colcon.colcon_core.verb:set package 'Integration' build argument 'cmake_target' from command line to 'None'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'Integration' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'Integration' build argument 'cmake_clean_cache' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'Integration' build argument 'cmake_clean_first' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'Integration' build argument 'cmake_force_configure' from command line to 'False'
+[0.254s] DEBUG:colcon.colcon_core.verb:Building package 'Integration' with the following arguments: {'build_base': '/home/anton/ros2_ws/src/LoversOfMen/build/Integration', 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/anton/ros2_ws/src/LoversOfMen/install/Integration', 'merge_install': False, 'path': '/home/anton/ros2_ws/src/LoversOfMen/Integration', 'symlink_install': False, 'test_result_base': None}
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'mtc' build argument 'cmake_args' from command line to 'None'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'mtc' build argument 'cmake_target' from command line to 'None'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'mtc' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'mtc' build argument 'cmake_clean_cache' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'mtc' build argument 'cmake_clean_first' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'mtc' build argument 'cmake_force_configure' from command line to 'False'
+[0.254s] DEBUG:colcon.colcon_core.verb:Building package 'mtc' with the following arguments: {'build_base': '/home/anton/ros2_ws/src/LoversOfMen/build/mtc', 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/anton/ros2_ws/src/LoversOfMen/install/mtc', 'merge_install': False, 'path': '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/mtc', 'symlink_install': False, 'test_result_base': None}
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'perception' build argument 'cmake_args' from command line to 'None'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'perception' build argument 'cmake_target' from command line to 'None'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'perception' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'perception' build argument 'cmake_clean_cache' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'perception' build argument 'cmake_clean_first' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'perception' build argument 'cmake_force_configure' from command line to 'False'
+[0.254s] DEBUG:colcon.colcon_core.verb:Building package 'perception' with the following arguments: {'build_base': '/home/anton/ros2_ws/src/LoversOfMen/build/perception', 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/anton/ros2_ws/src/LoversOfMen/install/perception', 'merge_install': False, 'path': '/home/anton/ros2_ws/src/LoversOfMen/Perception', 'symlink_install': False, 'test_result_base': None}
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'test' build argument 'cmake_args' from command line to 'None'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'test' build argument 'cmake_target' from command line to 'None'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'test' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'test' build argument 'cmake_clean_cache' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'test' build argument 'cmake_clean_first' from command line to 'False'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'test' build argument 'cmake_force_configure' from command line to 'False'
+[0.254s] DEBUG:colcon.colcon_core.verb:Building package 'test' with the following arguments: {'build_base': '/home/anton/ros2_ws/src/LoversOfMen/build/test', 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/anton/ros2_ws/src/LoversOfMen/install/test', 'merge_install': False, 'path': '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/test', 'symlink_install': False, 'test_result_base': None}
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_control' build argument 'cmake_args' from command line to 'None'
+[0.254s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_control' build argument 'cmake_target' from command line to 'None'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_control' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_control' build argument 'cmake_clean_cache' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_control' build argument 'cmake_clean_first' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_control' build argument 'cmake_force_configure' from command line to 'False'
+[0.255s] DEBUG:colcon.colcon_core.verb:Building package 'ur3e_rg2_control' with the following arguments: {'build_base': '/home/anton/ros2_ws/src/LoversOfMen/build/ur3e_rg2_control', 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/anton/ros2_ws/src/LoversOfMen/install/ur3e_rg2_control', 'merge_install': False, 'path': '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_control', 'symlink_install': False, 'test_result_base': None}
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_description' build argument 'cmake_args' from command line to 'None'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_description' build argument 'cmake_target' from command line to 'None'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.255s] DEBUG:colcon.colcon_core.verb:Building package 'ur3e_rg2_description' with the following arguments: {'build_base': '/home/anton/ros2_ws/src/LoversOfMen/build/ur3e_rg2_description', 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/anton/ros2_ws/src/LoversOfMen/install/ur3e_rg2_description', 'merge_install': False, 'path': '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_description', 'symlink_install': False, 'test_result_base': None}
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_moveit_config' build argument 'cmake_args' from command line to 'None'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_moveit_config' build argument 'cmake_target' from command line to 'None'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_moveit_config' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_moveit_config' build argument 'cmake_clean_cache' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_moveit_config' build argument 'cmake_clean_first' from command line to 'False'
+[0.255s] Level 5:colcon.colcon_core.verb:set package 'ur3e_rg2_moveit_config' build argument 'cmake_force_configure' from command line to 'False'
+[0.255s] DEBUG:colcon.colcon_core.verb:Building package 'ur3e_rg2_moveit_config' with the following arguments: {'build_base': '/home/anton/ros2_ws/src/LoversOfMen/build/ur3e_rg2_moveit_config', 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/anton/ros2_ws/src/LoversOfMen/install/ur3e_rg2_moveit_config', 'merge_install': False, 'path': '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_moveit_config', 'symlink_install': False, 'test_result_base': None}
+[0.255s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.256s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.257s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/anton/ros2_ws/src/LoversOfMen/Integration'
+[0.258s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.258s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.258s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.260s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/mtc'
+[0.260s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.260s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.261s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/anton/ros2_ws/src/LoversOfMen/Perception'
+[0.261s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.262s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.263s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/test'
+[0.263s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.263s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.264s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_control'
+[0.264s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.264s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.265s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_description'
+[0.266s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.266s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.267s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_moveit_config'
+[0.267s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.267s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.273s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/Integration': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Integration -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/Integration
+[0.275s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/mtc': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Traj_Control/mtc -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/mtc
+[0.277s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/perception': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Perception -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/perception
+[0.279s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/test': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Traj_Control/test -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/test
+[0.281s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/ur3e_rg2_control': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_control -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/ur3e_rg2_control
+[0.283s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/ur3e_rg2_description': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_description -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/ur3e_rg2_description
+[0.294s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/ur3e_rg2_moveit_config': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_moveit_config -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/ur3e_rg2_moveit_config
+[0.296s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/build/perception' returned '1': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Perception -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/perception
+[1.433s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[1.433s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[1.434s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '1'
+[1.434s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[1.438s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[1.438s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[1.438s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[1.449s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[1.450s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/anton/ros2_ws/src/LoversOfMen/install/local_setup.ps1'
+[1.451s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/anton/ros2_ws/src/LoversOfMen/install/_local_setup_util_ps1.py'
+[1.452s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/anton/ros2_ws/src/LoversOfMen/install/setup.ps1'
+[1.453s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/anton/ros2_ws/src/LoversOfMen/install/local_setup.sh'
+[1.453s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/anton/ros2_ws/src/LoversOfMen/install/_local_setup_util_sh.py'
+[1.454s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/anton/ros2_ws/src/LoversOfMen/install/setup.sh'
+[1.455s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/anton/ros2_ws/src/LoversOfMen/install/local_setup.bash'
+[1.455s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/anton/ros2_ws/src/LoversOfMen/install/setup.bash'
+[1.456s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/anton/ros2_ws/src/LoversOfMen/install/local_setup.zsh'
+[1.457s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/anton/ros2_ws/src/LoversOfMen/install/setup.zsh'

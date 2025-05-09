@@ -42,9 +42,6 @@ void MTCTaskNode::setBlockPoses(const std::vector<geometry_msgs::msg::Pose> &ini
         goal_ref.orientation = goal.orientation;
         goal_locations_.push_back(goal_ref);
     }
-
-    current_box_pose_ = block_locations_.front();
-    current_goal_pose_ = goal_locations_.front();
 }
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr MTCTaskNode::getNodeBaseInterface()
@@ -66,9 +63,9 @@ std::vector<moveit_msgs::msg::CollisionObject> MTCTaskNode::createCollisionObjec
         primitive.type = primitive.BOX;
         primitive.dimensions.resize(3);
         // 50 mm cube (0.05 m per side)
-        primitive.dimensions[0] = 0.05;
-        primitive.dimensions[1] = 0.05;
-        primitive.dimensions[2] = 0.05;
+        primitive.dimensions[0] = 0.04;
+        primitive.dimensions[1] = 0.04;
+        primitive.dimensions[2] = 0.04;
 
         geometry_msgs::msg::Pose cube_pose = waypoints[i];
 
@@ -88,6 +85,12 @@ void MTCTaskNode::setupPlanningScene()
     RCLCPP_INFO(this->get_logger(), "Added %zu collision objects to the planning scene.", collision_objects.size());
 }
 
+void MTCTaskNode::setCurrentGoal(int current_goal)
+{
+    current_box_name_ = "cube_" + std::to_string(current_goal);
+    current_goal_pose_ = goal_locations_.at(current_goal);
+}
+
 void MTCTaskNode::doTask()
 {
     task_ = createTask();
@@ -103,7 +106,7 @@ void MTCTaskNode::doTask()
     }
 
     // Plan the task
-    if (!task_.plan(15))
+    if (!task_.plan(5))
     {
         RCLCPP_ERROR(this->get_logger(), "Task planning failed");
         return;
@@ -148,10 +151,7 @@ mtc::Task MTCTaskNode::createTask()
     double vel = 1.0;
 
     // Stage 1: Current state
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     mtc::Stage *current_state_ptr = nullptr; // Forward current_state on to grasp pose generator
-#pragma GCC diagnostic pop
 
     auto stage_current = std::make_unique<mtc::stages::CurrentState>("current state");
     current_state_ptr = stage_current.get();
@@ -230,7 +230,7 @@ mtc::Task MTCTaskNode::createTask()
 
         {
             auto stage = std::make_unique<mtc::stages::ModifyPlanningScene>("allow collision");
-            stage->allowCollisions("cube_0", task.getRobotModel()->getJointModelGroup(gripper_group)->getLinkModelNamesWithCollisionGeometry(), true);
+            stage->allowCollisions(current_box_name_, task.getRobotModel()->getJointModelGroup(gripper_group)->getLinkModelNamesWithCollisionGeometry(), true);
             grasp->insert(std::move(stage));
         }
 
@@ -240,7 +240,7 @@ mtc::Task MTCTaskNode::createTask()
             stage->properties().configureInitFrom(mtc::Stage::PARENT);
             stage->properties().set("marker_ns", "grasp_pose");
             stage->setPreGraspPose("open");
-            stage->setObject("cube_0");
+            stage->setObject(current_box_name_);
             stage->setAngleDelta(M_PI / 2);
             stage->setMonitoredStage(move_to_start_ptr); // Hook into starting state
 
@@ -250,7 +250,7 @@ mtc::Task MTCTaskNode::createTask()
                                    Eigen::AngleAxisd(0, Eigen::Vector3d::UnitY()) *
                                    Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ());
             grasp_frame_transform.linear() = q.matrix();
-            grasp_frame_transform.translation().z() = 0.23;
+            grasp_frame_transform.translation().z() = 0.21;
 
             // Compute IK
 
@@ -274,7 +274,7 @@ mtc::Task MTCTaskNode::createTask()
 
         {
             auto stage = std::make_unique<mtc::stages::ModifyPlanningScene>("attach object");
-            stage->attachObject("cube_0", ik_frame);
+            stage->attachObject(current_box_name_, ik_frame);
             attach_object_stage = stage.get();
             grasp->insert(std::move(stage));
         }
@@ -318,10 +318,10 @@ mtc::Task MTCTaskNode::createTask()
             auto stage = std::make_unique<mtc::stages::GeneratePlacePose>("generate place pose");
             stage->properties().configureInitFrom(mtc::Stage::PARENT);
             stage->properties().set("marker_ns", "place_pose");
-            stage->setObject("cube_0");
+            stage->setObject(current_box_name_);
 
             geometry_msgs::msg::PoseStamped target_pose_msg;
-            target_pose_msg.header.frame_id = "cube_0";
+            target_pose_msg.header.frame_id = current_box_name_;
             target_pose_msg.pose = current_goal_pose_;
             stage->setPose(target_pose_msg);
             stage->setMonitoredStage(attach_object_stage); // Hook into attach_object_stage
@@ -332,7 +332,7 @@ mtc::Task MTCTaskNode::createTask()
 
             wrapper->setMaxIKSolutions(2);
             wrapper->setMinSolutionDistance(1.0);
-            wrapper->setIKFrame("cube_0");
+            wrapper->setIKFrame(current_box_name_);
             wrapper->properties().configureInitFrom(mtc::Stage::PARENT, {"eef", "group"});
             wrapper->properties().configureInitFrom(mtc::Stage::INTERFACE, {"target_pose"});
             place->insert(std::move(wrapper));
@@ -349,7 +349,7 @@ mtc::Task MTCTaskNode::createTask()
 
             auto stage =
                 std::make_unique<mtc::stages::ModifyPlanningScene>("forbid collision");
-            stage->allowCollisions("cube_0",
+            stage->allowCollisions(current_box_name_,
                                    task.getRobotModel()
                                        ->getJointModelGroup(gripper_group)
                                        ->getLinkModelNamesWithCollisionGeometry(),
@@ -360,7 +360,7 @@ mtc::Task MTCTaskNode::createTask()
 
         {
             auto stage = std::make_unique<mtc::stages::ModifyPlanningScene>("detach object");
-            stage->detachObject("cube_0", ik_frame);
+            stage->detachObject(current_box_name_, ik_frame);
             place->insert(std::move(stage));
         }
 

@@ -4,7 +4,7 @@ project(ur3e_rg2_control)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY launch config urdf rviz
+  DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME}
 )
 

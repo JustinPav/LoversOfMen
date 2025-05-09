@@ -1,0 +1,21 @@
+🧱 Initial Block Poses – In Front of Robot (within 0.4 m radius)
+
+ros2 topic pub /initial_block_poses geometry_msgs/msg/PoseArray "poses:
+- position: {x: 0.2, y: -0.27, z: 0.025}
+  orientation: {w: 1.0}
+- position: {x: 0.31, y: -0.29, z: 0.025}
+  orientation: {w: 1.0}
+- position: {x: 0.06, y: -0.36, z: 0.025}
+  orientation: {w: 1.0}
+- position: {x: 0.16, y: -0.42, z: 0.025}
+  orientation: {w: 1.0}"
+
+These positions are all in front of the robot (along +X) and within a 0.4m radius.
+
+🎯 Goal Block Poses – Still on the Right of Robot (unchanged)
+
+ros2 topic pub /goal_block_poses geometry_msgs/msg/PoseArray "poses:
+- position: {x: 0.20, y: 0.35, z: 0.025}
+  orientation: {w: 1.0}
+- position: {x: 0.26, y: 0.35, z: 0.025}
+  orientation: {w: 1.0}"
