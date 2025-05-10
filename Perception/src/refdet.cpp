@@ -16,14 +16,18 @@ public:
   {
     // --- PARAMETERS ---
     declare_parameter<std::string>("ref_image_path", "");
-    declare_parameter<double>("area_min_scale", 0.01);
-    declare_parameter<double>("area_max_scale", 1.0);
-    declare_parameter<double>("shape_score_threshold", 0.5);
+    declare_parameter<double>("area_min_scale", 0.001);
+    declare_parameter<double>("area_max_scale", 2.0);
+    declare_parameter<double>("shape_score_threshold", 1.0);
+    declare_parameter<double>("solidity_threshold", 0.8);
+    declare_parameter<double>("aspect_ratio_tolerance", 0.2);
 
     ref_path_ = get_parameter("ref_image_path").as_string();
     area_min_scale_ = get_parameter("area_min_scale").as_double();
     area_max_scale_ = get_parameter("area_max_scale").as_double();
     shape_score_threshold_ = get_parameter("shape_score_threshold").as_double();
+    solidity_threshold_ = get_parameter("solidity_threshold").as_double();
+    aspect_tol_ = get_parameter("aspect_ratio_tolerance").as_double();
 
     if (ref_path_.empty()) {
       RCLCPP_FATAL(get_logger(),
@@ -57,8 +61,16 @@ public:
       );
       ref_contour_ = *it;
       ref_area_ = cv::contourArea(ref_contour_);
+      
+      // Reference aspect ratio
+      cv::Rect rrect = cv::boundingRect(ref_contour_);
+      ref_aspect_ = static_cast<double>(rrect.width) / rrect.height;
+      ref_aspect_min_ = ref_aspect_ * (1.0 - aspect_tol_);
+      ref_aspect_max_ = ref_aspect_ * (1.0 + aspect_tol_);
+
       RCLCPP_INFO(get_logger(),
-        "Loaded reference contour (area=%.1f)", ref_area_);
+        "Loaded reference contour (area=%.1f, aspect=%.2f)",
+        ref_area_, ref_aspect_);
     }
 
     // --- VISUALIZE REFERENCE CONTOUR ---
@@ -109,22 +121,20 @@ private:
     cv::Mat gray, blur, mask_adapt, mask;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
     cv::GaussianBlur(gray, blur, {7,7}, 1.5);
-    // Adaptive threshold
     cv::adaptiveThreshold(
       blur, mask_adapt, 255,
       cv::ADAPTIVE_THRESH_GAUSSIAN_C,
       cv::THRESH_BINARY_INV,
       11, 2
     );
-    // Morphological close
+    // Morphological open+close to remove noise
     auto kernel = cv::getStructuringElement(
       cv::MORPH_RECT, cv::Size(5,5)
     );
-    cv::morphologyEx(
-      mask_adapt, mask,
-      cv::MORPH_CLOSE, kernel,
-      cv::Point(-1,-1), 1
-    );
+    cv::morphologyEx(mask_adapt, mask,
+                     cv::MORPH_OPEN, kernel, cv::Point(-1,-1), 1);
+    cv::morphologyEx(mask, mask,
+                     cv::MORPH_CLOSE, kernel, cv::Point(-1,-1), 1);
 
     // C) Find contours & score them
     std::vector<std::vector<cv::Point>> contours;
@@ -136,31 +146,31 @@ private:
     for (auto &c : contours) {
       double area = cv::contourArea(c);
       if (area < area_min_scale_*ref_area_ ||
-          area > area_max_scale_*ref_area_) {
-        continue;
-      }
-      // finer approx to preserve detail
+          area > area_max_scale_*ref_area_) continue;
+      // solidity filter
+      std::vector<cv::Point> hull;
+      cv::convexHull(c, hull);
+      double hull_area = cv::contourArea(hull);
+      double solidity = (hull_area > 0) ? (area / hull_area) : 0;
+      if (solidity < solidity_threshold_) continue;
+      // aspect ratio filter
+      cv::Rect br = cv::boundingRect(c);
+      double ar = static_cast<double>(br.width) / br.height;
+      if (ar < ref_aspect_min_ || ar > ref_aspect_max_) continue;
+
+      // finer approx
       std::vector<cv::Point> approx;
-      cv::approxPolyDP(
-        c, approx,
-        0.005 * cv::arcLength(c, true),
-        true
-      );
-      double score = cv::matchShapes(
-        approx, ref_contour_,
-        cv::CONTOURS_MATCH_I1, 0.0
-      );
-      // debug-draw every candidate
-      cv::putText(
-        frame, cv::format("%.2f", score),
-        approx.front(), cv::FONT_HERSHEY_PLAIN,
-        1.0, cv::Scalar(255,0,0), 1
-      );
-      cv::polylines(frame, approx, true,
-                    cv::Scalar(255,0,0), 1);
+      cv::approxPolyDP(c, approx,
+                       0.005 * cv::arcLength(c, true), true);
+      double score = cv::matchShapes(approx, ref_contour_, cv::CONTOURS_MATCH_I1, 0.0);
+
+      // debug: show all candidates
+      cv::putText(frame, cv::format("%.2f", score), approx.front(),
+                  cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar(255,0,0), 1);
+      cv::polylines(frame, approx, true, cv::Scalar(255,0,0), 1);
 
       if (score < best_score) {
-        best_score   = score;
+        best_score = score;
         best_contour = approx;
       }
     }
@@ -170,7 +180,6 @@ private:
       std::vector<cv::Point> hull;
       cv::convexHull(best_contour, hull);
       cv::polylines(frame, hull, true, cv::Scalar(0,255,0), 2);
-
       cv::Moments m = cv::moments(best_contour);
       double cx = m.m10 / m.m00;
       double cy = m.m01 / m.m00;
@@ -184,29 +193,29 @@ private:
       center_pub_->publish(pt);
     }
 
-    // E) Publish annotated frame for RViz
+    // E) Publish & visualize
     cv::Mat rgb;
     cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
     auto out = cv_bridge::CvImage(msg->header, "rgb8", rgb).toImageMsg();
     image_pub_->publish(*out);
-
-    cv::imshow("Mask",      mask);
+    cv::imshow("Mask", mask);
     cv::imshow("Detection", frame);
     cv::waitKey(1);
   }
 
   // parameters
   std::string ref_path_;
-  double      area_min_scale_, area_max_scale_, shape_score_threshold_;
+  double area_min_scale_, area_max_scale_, shape_score_threshold_;
+  double solidity_threshold_, aspect_tol_;
 
   // reference data
-  cv::Mat                   ref_mask_;
-  std::vector<cv::Point>    ref_contour_;
-  double                    ref_area_{0.0};
+  cv::Mat ref_mask_;
+  std::vector<cv::Point> ref_contour_;
+  double ref_area_{0.0}, ref_aspect_{0.0}, ref_aspect_min_{0.0}, ref_aspect_max_{0.0};
 
   // ROS interfaces
-  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr  image_sub_;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr     image_pub_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_pub_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr center_pub_;
 };
 
