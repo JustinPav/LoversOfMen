@@ -106,6 +106,21 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
 ### Perception & Sensing
 
 ### Trajectory Planning & Motion Control 
+#### Purpose
+The purpose of this subsystem is to plan and execute collision-free motion trajectories for the UR3e robot during the pick-and-place task. It leverages the MoveIt Task Constructor (MTC) framework to construct a multi-stage manipulation plan that includes approaching, grasping, lifting, transporting, and placing blocks. The subsystem is responsible for integrating perception-derived poses, generating appropriate robot motions, and safely executing them on the physical robot.
+
+#### Key Topics, Services, and Files
+
+| Element | Description |
+|--------|-------------|
+| `/initial_block_poses` *(topic)* | Subscribes to initial block poses published as `geometry_msgs::msg::PoseArray`. |
+| `/goal_block_poses` *(topic)* | Subscribes to goal block poses published as `geometry_msgs::msg::PoseArray`. |
+| `mtc_task_node.cpp` | Main node source file that sets up the MTC task, subscribes to input poses, and triggers task execution. |
+| `mtc_task.hpp` | Header file for the `MTCTaskNode` class, encapsulating the task setup, configuration, and execution logic. |
+| `ur3e_moveit_config/` | MoveIt configuration package including planner settings, joint limits, and robot semantics (SRDF). |
+| `launch/mtc_task.launch.py` | Launch file (if used) that starts the MTC node and supporting components such as MoveIt and RViz. |
+
+---
 
 ### Grasping & Manipulation 
 
