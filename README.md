@@ -51,6 +51,7 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
    ```bash
    sudo apt-get install ros-humble-ur
    sudo apt-get install ros-humble-moveit
+   sudo apt install ros-humble-realsense2-
    ```
 
 2. Navigate to your workspace and **clone all the following repositories** into the `src` directory:
@@ -91,7 +92,12 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
     ```bash
    ros2 launch 
    ```
-5. Launch the GUI:
+5. Launch the Perception nodes:
+    ```bash
+   ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_infra1:=true enable_infra1:=false enable_depth:=true
+   ros2 run perception refdet --ros-args -p ref_image_path:= *insert file path and file type here*
+   ```
+6. Launch the GUI:
     ```bash
    ros2 launch 
    ```
@@ -104,6 +110,14 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
 ## Subsystem Specifics
 
 ### Perception & Sensing
+The purpose of Perception and sensing is to provide the system with information about the working environment around it detecting desired objects and idenifying potential obstables which may cause collisions. This is so that the UR3e robot may be able to determine which trajectories to follow in order to complete the pickup and place task. It uses the Intel-Realsense wrapper which allows the integration of a Realsense camera into ROS-2. 
+| Element | Description |
+|--------|-------------|
+| `/camera/camera/infra1/image_rect_raw` *(topic)* | Subscribes to Intel-Realsense image stream. |
+| `/camera/depth/image_rect_raw` *(topic)* | Subscribes to depth data information. |
+| `refdet.cpp` | Main node source file that detects the desired object for pickup and place task. |
+| `rs_launch.py` | Launch file which integrates the data from the Realsense camera into ROS2 as subscribable topics. |
+
 
 ### Trajectory Planning & Motion Control 
 #### Purpose
