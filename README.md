@@ -34,6 +34,7 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
 ### Software
 - ROS 2 Humble.
 - MoveIt 2.
+- Intel-Realsense Wrapper
 - ...Others...
 
 ---
@@ -88,13 +89,12 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
    ```bash
    ros2 launch mtc mtc.launch.py ur_type:=ur3e onrobot_type:=rg2
    ```
-4. Launch the Perception node:
+4. Launch the Perception wrapper:
     ```bash
-   ros2 launch 
+   ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_infra1:=true enable_infra1:=false enable_depth:=true
    ```
 5. Launch the Perception nodes:
     ```bash
-   ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_infra1:=true enable_infra1:=false enable_depth:=true
    ros2 run perception refdet --ros-args -p ref_image_path:= *insert file path and file type here*
    ```
 6. Launch the GUI:
