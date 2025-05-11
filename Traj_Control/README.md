@@ -1,4 +1,4 @@
-# MoveIt Task Constructor (MTC) - Block Manipulation
+# MoveIt Task Constructor (MTC) - Block Manipulation Subsytem Test
 
 This package demonstrates block manipulation using the MoveIt Task Constructor (MTC) with a UR3e robot and an RG2 gripper in a simulated environment.
 
