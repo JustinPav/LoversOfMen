@@ -21,6 +21,6 @@
   <!-- OpenCV is pulled in by cv_bridge via CMake -->
   
   <export>
-    <build_type>ament_cmake</build_type><!-- Other tools can request information here -->
+    <!-- Other tools can request information here -->
   </export>
 </package>

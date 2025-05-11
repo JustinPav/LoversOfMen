@@ -78,7 +78,14 @@ _colcon_package_sh_source_script() {
 }
 
 # source sh hooks
+<<<<<<< HEAD:install/perception/share/perception/package.sh
+_colcon_package_sh_source_script "$COLCON_CURRENT_PREFIX/share/perception/hook/cmake_prefix_path.sh"
+_colcon_package_sh_source_script "$COLCON_CURRENT_PREFIX/share/perception/hook/ros_package_path.sh"
+_colcon_package_sh_source_script "$COLCON_CURRENT_PREFIX/share/perception/hook/pkg_config_path.sh"
+_colcon_package_sh_source_script "$COLCON_CURRENT_PREFIX/share/perception/hook/pkg_config_path_multiarch.sh"
+=======
 _colcon_package_sh_source_script "$COLCON_CURRENT_PREFIX/share/integration/hook/cmake_prefix_path.sh"
+>>>>>>> 89f9c3bbb5a0dfe12bee0bb73fd3ac8adf4ba92b:install/integration/share/integration/package.sh
 
 unset _colcon_package_sh_source_script
 unset COLCON_CURRENT_PREFIX

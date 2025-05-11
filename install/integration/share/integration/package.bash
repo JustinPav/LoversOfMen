@@ -25,7 +25,11 @@ _colcon_package_bash_source_script() {
 }
 
 # source sh script of this package
+<<<<<<< HEAD:install/perception/share/perception/package.bash
+_colcon_package_bash_source_script "$_colcon_package_bash_COLCON_CURRENT_PREFIX/share/perception/package.sh"
+=======
 _colcon_package_bash_source_script "$_colcon_package_bash_COLCON_CURRENT_PREFIX/share/integration/package.sh"
+>>>>>>> 89f9c3bbb5a0dfe12bee0bb73fd3ac8adf4ba92b:install/integration/share/integration/package.bash
 
 unset _colcon_package_bash_source_script
 unset _colcon_package_bash_COLCON_CURRENT_PREFIX

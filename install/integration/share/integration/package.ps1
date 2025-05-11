@@ -110,6 +110,13 @@ function colcon_package_source_powershell_script {
 # the prefix is two levels up from the package specific share directory
 $env:COLCON_CURRENT_PREFIX=(Get-Item $PSCommandPath).Directory.Parent.Parent.FullName
 
+<<<<<<< HEAD:install/perception/share/perception/package.ps1
+colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX\share/perception/hook/cmake_prefix_path.ps1"
+colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX\share/perception/hook/ros_package_path.ps1"
+colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX\share/perception/hook/pkg_config_path.ps1"
+colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX\share/perception/hook/pkg_config_path_multiarch.ps1"
+=======
 colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX\share/integration/hook/cmake_prefix_path.ps1"
+>>>>>>> 89f9c3bbb5a0dfe12bee0bb73fd3ac8adf4ba92b:install/integration/share/integration/package.ps1
 
 Remove-Item Env:\COLCON_CURRENT_PREFIX
