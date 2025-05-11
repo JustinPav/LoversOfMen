@@ -137,7 +137,7 @@ The purpose of this subsystem is to plan and execute collision-free motion traje
 ---
 
 ### Grasping & Manipulation 
-
+This subsystem focuses on the integration and control of the RG2 gripper attached to the UR3e robotic arm. To enable grasping functionality, the RG2 gripper’s URDF model was merged with the UR3e’s robot description, ensuring a complete kinematic chain from the robot base to the gripper fingers. The MoveIt! configuration package was then updated to include the gripper in the planning group by defining joint limits and adding the `/finger_width_joint` to the Semantic Robot Description Format (SRDF). This allowed MoveIt! to plan and execute grasping motions such as opening and closing the gripper by targeting specific joint positions within the motion planning pipeline. These configurations enabled seamless integration of the gripper into the overall pick-and-place task. 
 ### System Integration & User Interface 
 
 
