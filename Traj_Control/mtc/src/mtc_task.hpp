@@ -24,6 +24,9 @@ public:
   // Setup the planning scene (e.g., add boxes at pickup locations)
   void setupPlanningScene();
 
+  // Set the current goal index and update the block name and pose.
+  void setCurrentGoal(int current_goal);
+
   // Execute the pick and place task organized into stages.
   void doTask();
 
@@ -47,6 +50,7 @@ private:
   // Poses used in the task stages:
   geometry_msgs::msg::Pose current_box_pose_;  // Approach pose above the block (for pick-up)
   geometry_msgs::msg::Pose current_goal_pose_; // Pose for moving toward the placement location
+  std::string current_box_name_;               // Name of the block being manipulated
 };
 
 #endif // MTC_TASK_HPP

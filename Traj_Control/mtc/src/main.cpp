@@ -32,27 +32,53 @@ private:
   {
     initial_poses_ = msg->poses;
     initial_received_ = true;
+    mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
+    mtc_task_node_->setupPlanningScene();
+    RCLCPP_INFO(this->get_logger(), "Received %i block poses.", static_cast<int>(initial_poses_.size()));
     maybeStartTask();
   }
 
   void goalPoseCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
   {
-    goal_poses_ = msg->poses;
-    goal_received_ = true;
+    if (!goal_received_)
+    {
+      goal_poses_ = msg->poses;
+      goal_received_ = true;
+      total_no_of_goals_ = static_cast<int>(goal_poses_.size());
+      if (initial_received_)
+      {
+        mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
+        mtc_task_node_->setupPlanningScene();
+      }
+      RCLCPP_INFO(this->get_logger(), "Received %i goal poses.", total_no_of_goals_);
+    }
     maybeStartTask();
   }
 
   void maybeStartTask()
   {
-    if (initial_received_ && goal_received_ && !task_started_)
+    if (initial_received_ && goal_received_ && !task_finished_)
     {
-      RCLCPP_INFO(this->get_logger(), "Both pose arrays received. Starting task...");
 
-      mtc_task_node_->setBlockPoses(initial_poses_, goal_poses_);
-      mtc_task_node_->setupPlanningScene();
-      mtc_task_node_->doTask();
+      while (!task_finished_)
+      {
+        RCLCPP_INFO(this->get_logger(), "Both pose arrays received. Starting task...");
 
-      task_started_ = true;
+        int current_goal = total_no_of_goals_ - static_cast<int>(goal_poses_.size());
+        RCLCPP_INFO(this->get_logger(), "Current goal index: %i", current_goal);
+        mtc_task_node_->setCurrentGoal(current_goal);
+        mtc_task_node_->doTask();
+
+        // Remove the first goal pose from the list
+        goal_poses_.erase(goal_poses_.begin());
+        RCLCPP_INFO(this->get_logger(), "Goal Pose achieved. %i poses remaining.", static_cast<int>(goal_poses_.size()));
+
+        if (goal_poses_.empty())
+        {
+          RCLCPP_INFO(this->get_logger(), "No goal poses remaining. Task finished.");
+          task_finished_ = true;
+        }
+      }
     }
   }
 
@@ -64,7 +90,8 @@ private:
   std::vector<geometry_msgs::msg::Pose> goal_poses_;
   bool initial_received_ = false;
   bool goal_received_ = false;
-  bool task_started_ = false;
+  bool task_finished_ = false;
+  int total_no_of_goals_ = 0;
 };
 
 int main(int argc, char **argv)
