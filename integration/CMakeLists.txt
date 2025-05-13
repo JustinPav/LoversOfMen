@@ -9,22 +9,22 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)  # Add this line to find the tf2 package
 
-
-# Create executable
-add_executable(coordinates_publisher src/coordinates_publisher.cpp)
+# Create executables
+add_executable(pose_publisher src/PosePublisher.cpp)
+add_executable(pose_subscriber src/PoseSubscriber.cpp)
+add_executable(letter_sort src/LetterSort.cpp)
 
 # Link dependencies
-ament_target_dependencies(coordinates_publisher
-  rclcpp
-  geometry_msgs
-)
+ament_target_dependencies(pose_publisher rclcpp geometry_msgs tf2)
+ament_target_dependencies(pose_subscriber rclcpp geometry_msgs tf2)
 
-
-# Install the executable
+# Install the executables
 install(TARGETS
-  coordinates_publisher
-  DESTINATION lib/${PROJECT_NAME}
+  pose_publisher
+  pose_subscriber
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
@@ -35,4 +35,3 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
-

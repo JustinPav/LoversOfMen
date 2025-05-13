@@ -1,6 +1,0 @@
-Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Integration -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/Integration/install/Integration
-Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration' returned '0': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Integration -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/Integration/install/Integration
-Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration': /usr/bin/cmake --build /home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration -- -j8 -l8
-Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration' returned '0': /usr/bin/cmake --build /home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration -- -j8 -l8
-Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration': /usr/bin/cmake --install /home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration
-Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration' returned '0': /usr/bin/cmake --install /home/anton/ros2_ws/src/LoversOfMen/Integration/build/Integration

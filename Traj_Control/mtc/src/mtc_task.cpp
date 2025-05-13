@@ -11,20 +11,27 @@ using namespace std::chrono_literals;
 MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     : rclcpp::Node("mtc_task_node", options)
 {
+    // Create a table collision object
 
-    geometry_msgs::msg::Pose p1;
-    p1.position.x = 0.4;
-    p1.position.y = -0.2;
-    p1.position.z = 0.05;
-    p1.orientation.w = 1.0;
-    current_box_pose_ = p1;
+    moveit_msgs::msg::CollisionObject collision_object;
+    collision_object.header.frame_id = "world";
+    collision_object.id = "Table";
 
-    geometry_msgs::msg::Pose goal1;
-    goal1.position.x = 0.05;
-    goal1.position.y = 0.05;
-    goal1.position.z = 0.05;
-    goal1.orientation.w = 1.0;
-    current_goal_pose_ = goal1;
+    shape_msgs::msg::SolidPrimitive primitive;
+    primitive.type = primitive.BOX;
+    primitive.dimensions.resize(3);
+    primitive.dimensions[0] = 1.2;
+    primitive.dimensions[1] = 1.2;
+    primitive.dimensions[2] = 0.05;
+
+    geometry_msgs::msg::Pose cube_pose;
+    cube_pose.position.z = -0.03;
+
+    collision_object.primitives.push_back(primitive);
+    collision_object.primitive_poses.push_back(cube_pose);
+    collision_object.operation = collision_object.ADD;
+
+    planning_scene_interface_.applyCollisionObject(collision_object);
 }
 
 void MTCTaskNode::setBlockPoses(const std::vector<geometry_msgs::msg::Pose> &initial_poses, const std::vector<geometry_msgs::msg::Pose> &goal_poses)

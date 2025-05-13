@@ -1,1 +1,0 @@
-Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/ur3e_rg2_control': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Traj_Control/ur3e_rg2_control -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/ur3e_rg2_control
