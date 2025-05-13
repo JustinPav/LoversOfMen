@@ -1,4 +1,0 @@
-Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration': /usr/bin/cmake --build /home/anton/ros2_ws/src/LoversOfMen/integration/build/integration -- -j8 -l8
-Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration' returned '0': /usr/bin/cmake --build /home/anton/ros2_ws/src/LoversOfMen/integration/build/integration -- -j8 -l8
-Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration': /usr/bin/cmake --install /home/anton/ros2_ws/src/LoversOfMen/integration/build/integration
-Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/integration/build/integration' returned '0': /usr/bin/cmake --install /home/anton/ros2_ws/src/LoversOfMen/integration/build/integration

@@ -1,8 +1,0 @@
-[0.015s] Invoking command in '/home/anton/ros2_ws/src/LoversOfMen/build/perception': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Perception -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/perception
-[0.026s] -- Configuring incomplete, errors occurred!
-[0.026s] [31mCMake Error at CMakeLists.txt:18:
-[0.026s]   Parse error.  Expected a command name, got unquoted argument with text
-[0.027s]   "<<<<<<<".
-[0.027s] 
-[0.027s] [0m
-[0.034s] Invoked command in '/home/anton/ros2_ws/src/LoversOfMen/build/perception' returned '1': /usr/bin/cmake /home/anton/ros2_ws/src/LoversOfMen/Perception -DCMAKE_INSTALL_PREFIX=/home/anton/ros2_ws/src/LoversOfMen/install/perception
