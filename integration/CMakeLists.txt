@@ -24,6 +24,7 @@ ament_target_dependencies(pose_subscriber rclcpp geometry_msgs tf2)
 install(TARGETS
   pose_publisher
   pose_subscriber
+  letter_sort
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
