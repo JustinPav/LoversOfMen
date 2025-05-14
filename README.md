@@ -99,8 +99,11 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
    ```
 6. Launch the GUI:
     ```bash
-   ros2 launch 
+   python3 src/main.py
    ```
+7. Launch the integration nodes
+    ```bash
+    ross2 launch integration coordinates_publisher coordinate_subscriber letter_sort
 
 ### Expected Outcome
 - The perception node will detect block locations and send them to the word sorting node.
