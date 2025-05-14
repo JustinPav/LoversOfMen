@@ -7,6 +7,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
 
@@ -74,8 +75,9 @@ public:
     cv::waitKey(1);
 
     // Publishers & subscribers
-    image_pub_ = create_publisher<sensor_msgs::msg::Image>("detection/image", 10);
+    image_pub_  = create_publisher<sensor_msgs::msg::Image>("detection/image", 10);
     center_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("detection/center", 10);
+    depth_pub_  = create_publisher<std_msgs::msg::Float32>("detection/depth", 10);
 
     image_sub_ = create_subscription<sensor_msgs::msg::Image>(
       "/camera/camera/infra1/image_rect_raw",
@@ -122,8 +124,8 @@ private:
                           cv::ADAPTIVE_THRESH_GAUSSIAN_C,
                           cv::THRESH_BINARY_INV, 11, 2);
     auto kernel = cv::getStructuringElement(cv::MORPH_RECT, {5,5});
-    cv::morphologyEx(mask_adapt, mask, cv::MORPH_OPEN, kernel, {}, 1);
-    cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel, {}, 1);
+    cv::morphologyEx(mask_adapt, mask, cv::MORPH_OPEN,  kernel, {}, 1);
+    cv::morphologyEx(mask,       mask, cv::MORPH_CLOSE, kernel, {}, 1);
 
     // Find & score contours
     std::vector<std::vector<cv::Point>> contours;
@@ -190,9 +192,9 @@ private:
         }
       }
 
-      // Output depth to console
       RCLCPP_INFO(get_logger(), "Object center depth: %.3f m at pixel (%.0f, %.0f)", depth_m, cx, cy);
 
+      // Publish center point
       geometry_msgs::msg::PointStamped pt;
       pt.header = msg->header;
       pt.point.x = cx;
@@ -200,16 +202,23 @@ private:
       pt.point.z = depth_m;
       center_pub_->publish(pt);
 
+      // Publish depth only
+      std_msgs::msg::Float32 depth_msg;
+      depth_msg.data = depth_m;
+      depth_pub_->publish(depth_msg);
+
       // Overlay depth text
       cv::putText(frame, cv::format("Z=%.2fm", depth_m),
                   cv::Point((int)cx+5,(int)cy-5), cv::FONT_HERSHEY_PLAIN,
                   1.0, {0,255,0}, 1);
     }
 
-    // Publish annotated and show
+    // Publish annotated image
     cv::Mat rgb;
     cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
     image_pub_->publish(*cv_bridge::CvImage(msg->header, "rgb8", rgb).toImageMsg());
+
+    // Optional: visualize
     cv::imshow("Mask", mask);
     cv::imshow("Detection", frame);
     cv::waitKey(1);
@@ -223,11 +232,12 @@ private:
   std::vector<cv::Point> ref_contour_;
   double ref_area_, ref_aspect_, ref_aspect_min_, ref_aspect_max_;
 
-  // ROS
+  // ROS interfaces
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr depth_sub_;
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_pub_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr center_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr depth_pub_;
 
   // Depth buffer
   cv::Mat depth_frame_;
