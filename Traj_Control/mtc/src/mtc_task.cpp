@@ -20,12 +20,13 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     shape_msgs::msg::SolidPrimitive primitive;
     primitive.type = primitive.BOX;
     primitive.dimensions.resize(3);
-    primitive.dimensions[0] = 1.2;
-    primitive.dimensions[1] = 1.2;
-    primitive.dimensions[2] = 0.05;
+    primitive.dimensions[0] = 0.8;
+    primitive.dimensions[1] = 0.8;
+    primitive.dimensions[2] = 0.001;
 
     geometry_msgs::msg::Pose cube_pose;
-    cube_pose.position.z = -0.03;
+    cube_pose.position.z = -0.001;
+    cube_pose.position.y = 0.2;
 
     collision_object.primitives.push_back(primitive);
     collision_object.primitive_poses.push_back(cube_pose);
