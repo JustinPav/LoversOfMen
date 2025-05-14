@@ -35,7 +35,7 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
 - ROS 2 Humble.
 - MoveIt 2.
 - Intel-Realsense Wrapper
-- ...Others...
+- Universal Robots ROS2 Driver
 
 ---
 
@@ -103,51 +103,7 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
    ```
 
 ### Expected Outcome
-- The robot should pick up blocks from their initial positions and place them at the goal positions.
-
----
-
-## Subsystem Specifics
-
-### Perception & Sensing
-The purpose of Perception and sensing is to provide the system with information about the working environment around it detecting desired objects and idenifying potential obstables which may cause collisions. This is so that the UR3e robot may be able to determine which trajectories to follow in order to complete the pickup and place task. It uses the Intel-Realsense wrapper which allows the integration of a Realsense camera into ROS-2. 
-| Element | Description |
-|--------|-------------|
-| `/camera/camera/infra1/image_rect_raw` *(topic)* | Subscribes to Intel-Realsense image stream. |
-| `/camera/depth/image_rect_raw` *(topic)* | Subscribes to depth data information. |
-| `refdet.cpp` | Main node source file that detects the desired object for pickup and place task. |
-| `rs_launch.py` | Launch file which integrates the data from the Realsense camera into ROS2 as subscribable topics. |
-
-
-### Trajectory Planning & Motion Control 
-#### Purpose
-The purpose of this subsystem is to plan and execute collision-free motion trajectories for the UR3e robot during the pick-and-place task. It leverages the MoveIt Task Constructor (MTC) framework to construct a multi-stage manipulation plan that includes approaching, grasping, lifting, transporting, and placing blocks. The subsystem is responsible for integrating perception-derived poses, generating appropriate robot motions, and safely executing them on the physical robot.
-
-#### Key Topics, Services, and Files
-
-| Element | Description |
-|--------|-------------|
-| `/initial_block_poses` *(topic)* | Subscribes to initial block poses published as `geometry_msgs::msg::PoseArray`. |
-| `/goal_block_poses` *(topic)* | Subscribes to goal block poses published as `geometry_msgs::msg::PoseArray`. |
-| `mtc_task_node.cpp` | Main node source file that sets up the MTC task, subscribes to input poses, and triggers task execution. |
-| `mtc_task.hpp` | Header file for the `MTCTaskNode` class, encapsulating the task setup, configuration, and execution logic. |
-| `ur3e_moveit_config/` | MoveIt configuration package including planner settings, joint limits, and robot semantics (SRDF). |
-| `launch/mtc_task.launch.py` | Launch file (if used) that starts the MTC node and supporting components such as MoveIt and RViz. |
-
----
-
-### Grasping & Manipulation 
-This subsystem focuses on the integration and control of the RG2 gripper attached to the UR3e robotic arm. To enable grasping functionality, the RG2 gripper’s URDF model was merged with the UR3e’s robot description, ensuring a complete kinematic chain from the robot base to the gripper fingers. The MoveIt! configuration package was then updated to include the gripper in the planning group by defining joint limits and adding the `finger_width_joint` to the Semantic Robot Description Format (SRDF). This allowed MoveIt! to plan and execute grasping motions such as opening and closing the gripper by targeting specific joint positions within the motion planning pipeline. These configurations enabled seamless integration of the gripper into the overall pick-and-place task. 
-### System Integration & User Interface 
-
-
----
-
-## Troubleshooting & FAQs
-
-### Common Issues
-
-### FAQs
-
-
----
+- The perception node will detect block locations and send them to the word sorting node.
+- The word sorting node will unscramble them and then publish inital and goal positions for the blocks.
+- The robot will pick up blocks from their initial positions and place them at the goal positions.
+- The robot will display that the task has been executed.

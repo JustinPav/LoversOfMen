@@ -13,6 +13,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(image_transport REQUIRED)
 
 # include dirs
 include_directories(
@@ -30,6 +31,7 @@ ament_target_dependencies(refdet
   geometry_msgs
   cv_bridge
   OpenCV
+  image_transport
 )
 
 # install the node
