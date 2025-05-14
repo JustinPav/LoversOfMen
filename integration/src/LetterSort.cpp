@@ -28,7 +28,7 @@ int main() {
     std::cout << "Enter 6 letters: ";
     std::cin >> letters;
 
-    if (letters.length() != 6) {
+    if (letters.length() != 7) {
         std::cerr << "Error: Please enter exactly 6 letters.\n";
         return 1;
     }
