@@ -226,7 +226,7 @@ mtc::Task MTCTaskNode::createTask()
             stage->properties().set("marker_ns", "approach_object");
             stage->properties().set("link", ik_frame);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.05, 0.15);
+            stage->setMinMaxDistance(0.05, 0.1);
 
             // Set hand forward direction
             geometry_msgs::msg::Vector3Stamped vec;
@@ -290,7 +290,7 @@ mtc::Task MTCTaskNode::createTask()
         {
             auto stage = std::make_unique<mtc::stages::MoveRelative>("lift object", cartesian_planner);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.05, 0.3);
+            stage->setMinMaxDistance(0.05, 0.1);
             stage->setIKFrame(ik_frame);
             stage->properties().set("marker_ns", "lift_object");
 
@@ -375,7 +375,7 @@ mtc::Task MTCTaskNode::createTask()
         {
             auto stage = std::make_unique<mtc::stages::MoveRelative>("retreat", cartesian_planner);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.05, 0.3);
+            stage->setMinMaxDistance(0.05, 0.1);
             stage->setIKFrame(ik_frame);
             stage->properties().set("marker_ns", "retreat");
 
