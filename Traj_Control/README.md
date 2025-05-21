@@ -31,9 +31,9 @@ ros2 launch mtc mtc.launch.py ur_type:=ur3e onrobot_type:=rg2
 In a new terminal, publish the initial block poses:
 ```bash
 ros2 topic pub /initial_block_poses geometry_msgs/msg/PoseArray "poses:
-- position: {x: 0.2, y: -0.20, z: 0.025}
+- position: {x: 0.2, y: -0.10, z: 0.025}
   orientation: {w: 1.0}
-- position: {x: 0.31, y: -0.29, z: 0.025}
+- position: {x: 0.31, y: -0.0, z: 0.025}
   orientation: {w: 1.0}
 - position: {x: 0.06, y: -0.36, z: 0.025}
   orientation: {w: 1.0}
@@ -44,13 +44,13 @@ ros2 topic pub /initial_block_poses geometry_msgs/msg/PoseArray "poses:
 Then, publish the goal block poses:
 ```bash
 ros2 topic pub /goal_block_poses geometry_msgs/msg/PoseArray "poses:
-- position: {x: 0.14, y: 0.35, z: 0.025}
+- position: {x: 0.14, y: 0.35, z: 0.038}
   orientation: {w: 1.0}
-- position: {x: 0.20, y: 0.35, z: 0.025}
+- position: {x: 0.20, y: 0.35, z: 0.038}
   orientation: {w: 1.0}
-- position: {x: 0.26, y: 0.35, z: 0.025}
+- position: {x: 0.26, y: 0.35, z: 0.038}
   orientation: {w: 1.0}
-- position: {x: 0.32, y: 0.35, z: 0.025}
+- position: {x: 0.32, y: 0.35, z: 0.038}
   orientation: {w: 1.0}"
 ```
 
