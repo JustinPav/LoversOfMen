@@ -154,7 +154,7 @@ mtc::Task MTCTaskNode::createTask()
     task.setCostTerm(std::make_shared<mtc::cost::TrajectoryDuration>());
 
     // Set timeout for Connect stages as well as acceleration and velocity scaling factors
-    double timeout = 5.0;
+    double timeout = 1.0;
     double acc = 0.5;
     double vel = 1.0;
 
@@ -226,7 +226,7 @@ mtc::Task MTCTaskNode::createTask()
             stage->properties().set("marker_ns", "approach_object");
             stage->properties().set("link", ik_frame);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.1, 0.15);
+            stage->setMinMaxDistance(0.05, 0.15);
 
             // Set hand forward direction
             geometry_msgs::msg::Vector3Stamped vec;
@@ -290,7 +290,7 @@ mtc::Task MTCTaskNode::createTask()
         {
             auto stage = std::make_unique<mtc::stages::MoveRelative>("lift object", cartesian_planner);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.07, 0.3);
+            stage->setMinMaxDistance(0.05, 0.3);
             stage->setIKFrame(ik_frame);
             stage->properties().set("marker_ns", "lift_object");
 
@@ -375,7 +375,7 @@ mtc::Task MTCTaskNode::createTask()
         {
             auto stage = std::make_unique<mtc::stages::MoveRelative>("retreat", cartesian_planner);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.07, 0.3);
+            stage->setMinMaxDistance(0.05, 0.3);
             stage->setIKFrame(ik_frame);
             stage->properties().set("marker_ns", "retreat");
 
