@@ -1,2 +1,0 @@
-Invoking command in '/home/anton/git/LoversOfMen/Perception/build/perception': /usr/bin/cmake /home/anton/git/LoversOfMen/Perception -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/home/anton/git/LoversOfMen/Perception/install/perception
-Invoked command in '/home/anton/git/LoversOfMen/Perception/build/perception' returned '1': /usr/bin/cmake /home/anton/git/LoversOfMen/Perception -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/home/anton/git/LoversOfMen/Perception/install/perception
