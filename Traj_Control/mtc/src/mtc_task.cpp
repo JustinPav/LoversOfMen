@@ -20,12 +20,13 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions &options)
     shape_msgs::msg::SolidPrimitive primitive;
     primitive.type = primitive.BOX;
     primitive.dimensions.resize(3);
-    primitive.dimensions[0] = 1.2;
-    primitive.dimensions[1] = 1.2;
-    primitive.dimensions[2] = 0.05;
+    primitive.dimensions[0] = 0.8;
+    primitive.dimensions[1] = 0.8;
+    primitive.dimensions[2] = 0.001;
 
     geometry_msgs::msg::Pose cube_pose;
-    cube_pose.position.z = -0.03;
+    cube_pose.position.z = -0.001;
+    cube_pose.position.y = 0.2;
 
     collision_object.primitives.push_back(primitive);
     collision_object.primitive_poses.push_back(cube_pose);
@@ -153,7 +154,7 @@ mtc::Task MTCTaskNode::createTask()
     task.setCostTerm(std::make_shared<mtc::cost::TrajectoryDuration>());
 
     // Set timeout for Connect stages as well as acceleration and velocity scaling factors
-    double timeout = 5.0;
+    double timeout = 1.0;
     double acc = 0.5;
     double vel = 1.0;
 
@@ -225,7 +226,7 @@ mtc::Task MTCTaskNode::createTask()
             stage->properties().set("marker_ns", "approach_object");
             stage->properties().set("link", ik_frame);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.1, 0.15);
+            stage->setMinMaxDistance(0.05, 0.1);
 
             // Set hand forward direction
             geometry_msgs::msg::Vector3Stamped vec;
@@ -289,7 +290,7 @@ mtc::Task MTCTaskNode::createTask()
         {
             auto stage = std::make_unique<mtc::stages::MoveRelative>("lift object", cartesian_planner);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.07, 0.3);
+            stage->setMinMaxDistance(0.05, 0.1);
             stage->setIKFrame(ik_frame);
             stage->properties().set("marker_ns", "lift_object");
 
@@ -374,7 +375,7 @@ mtc::Task MTCTaskNode::createTask()
         {
             auto stage = std::make_unique<mtc::stages::MoveRelative>("retreat", cartesian_planner);
             stage->properties().configureInitFrom(mtc::Stage::PARENT, {"group"});
-            stage->setMinMaxDistance(0.07, 0.3);
+            stage->setMinMaxDistance(0.05, 0.1);
             stage->setIKFrame(ik_frame);
             stage->properties().set("marker_ns", "retreat");
 
