@@ -1,90 +1,72 @@
 #include <rclcpp/rclcpp.hpp>
-#include <geometry_msgs/msg/pose_array.hpp>
+#include <geometry_msgs/msg/point_stamped.hpp>
 #include <geometry_msgs/msg/pose.hpp>
+#include <geometry_msgs/msg/pose_array.hpp>
 
-#include <iostream>
+#include <fstream>
 #include <string>
 #include <unordered_map>
-#include <fstream>
 #include <algorithm>
-#include <vector>
-
-// Node subscribes to /F, /A, /I (Pose messages), solves longest word, then publishes
-// initial poses reordered to match the solved word on /initial_block_poses as a PoseArray
 
 class LetterSortNode : public rclcpp::Node {
 public:
     LetterSortNode()
     : Node("letter_sort_node")
     {
-        // Publisher for reordered initial block poses
-        init_pub_ = this->create_publisher<geometry_msgs::msg::PoseArray>(
-            "/initial_block_poses", 10);
+        // Publisher for PoseArray of solved word poses
+        pose_pub_ = this->create_publisher<geometry_msgs::msg::PoseArray>(
+            "/initial_poses", 10);
 
-        // Subscribers for each letter topic
-        sub_F_ = create_subscription<geometry_msgs::msg::Pose>(
-            "/F", 10,
-            [this](const geometry_msgs::msg::Pose::SharedPtr msg){ onPoseReceived('F', *msg); }
-        );
-        sub_A_ = create_subscription<geometry_msgs::msg::Pose>(
+        // Subscriber for letter 'A' point
+        sub_A_ = this->create_subscription<geometry_msgs::msg::PointStamped>(
             "/A", 10,
-            [this](const geometry_msgs::msg::Pose::SharedPtr msg){ onPoseReceived('A', *msg); }
-        );
-        sub_I_ = create_subscription<geometry_msgs::msg::Pose>(
-            "/I", 10,
-            [this](const geometry_msgs::msg::Pose::SharedPtr msg){ onPoseReceived('I', *msg); }
+            [this](const geometry_msgs::msg::PointStamped::SharedPtr msg){ onPointReceived(*msg); }
         );
     }
 
 private:
-    rclcpp::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr init_pub_;
-    rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr sub_F_, sub_A_, sub_I_;
+    rclcpp::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr pose_pub_;
+    rclcpp::Subscription<geometry_msgs::msg::PointStamped>::SharedPtr sub_A_;
 
-    std::unordered_map<char, geometry_msgs::msg::Pose> pose_map_;
-    std::unordered_map<char, bool> received_{{'F',false},{'A',false},{'I',false}};
+    geometry_msgs::msg::Pose last_pose_;
+    bool received_A_ = false;
 
     // Count letter frequencies
-    std::unordered_map<char, int> countLetters(const std::string &str) {
+    std::unordered_map<char,int> countLetters(const std::string &str) {
         std::unordered_map<char,int> freq;
         for (char c: str) freq[c]++;
         return freq;
     }
-    bool canFormWord(const std::string &word, const std::unordered_map<char,int>& freq) {
+
+    bool canFormWord(const std::string &word, const std::unordered_map<char,int> &freq) {
         auto wf = countLetters(word);
         for (auto &p: wf) {
-            char c = p.first;
-            if (!freq.count(c) || freq.at(c) < p.second) return false;
+            if (!freq.count(p.first) || freq.at(p.first) < p.second) return false;
         }
         return true;
     }
 
-    void onPoseReceived(char letter, const geometry_msgs::msg::Pose &pose) {
-        // Store pose, ensure orientation.w = 1
-        geometry_msgs::msg::Pose p = pose;
-        p.orientation.x = 0.0;
-        p.orientation.y = 0.0;
-        p.orientation.z = 0.0;
-        p.orientation.w = 1.0;
-        pose_map_[letter] = p;
-        received_[letter] = true;
-        RCLCPP_INFO(get_logger(), "Received pose for letter '%c'", letter);
-
-        // Check if all received
-        if (received_['F'] && received_['A'] && received_['I']) {
-            solveAndPublish();
-        }
+    void onPointReceived(const geometry_msgs::msg::PointStamped &msg) {
+        // Convert PointStamped to Pose with orientation.w = 1
+        last_pose_.position = msg.point;
+        last_pose_.orientation.x = 0.0;
+        last_pose_.orientation.y = 0.0;
+        last_pose_.orientation.z = 0.0;
+        last_pose_.orientation.w = 1.0;
+        received_A_ = true;
+        RCLCPP_INFO(get_logger(), "Received point on /A: [%.2f, %.2f, %.2f]", 
+                    msg.point.x, msg.point.y, msg.point.z);
+        solveAndPublish();
     }
 
     void solveAndPublish() {
-        // Build input letter string
-        std::string letters;
-        for (auto &kv: received_) {
-            if (kv.second) letters.push_back(kv.first);
-        }
-        std::transform(letters.begin(), letters.end(), letters.begin(), ::tolower);
+        if (!received_A_) return;
 
-        // Solve longest word from letters
+        // Only letter available is 'A'
+        std::string letters = "a";
         auto freq = countLetters(letters);
+
+        // Solve longest word from dictionary
         std::ifstream dict("/usr/share/dict/words");
         std::string word, best;
         while (std::getline(dict, word)) {
@@ -95,26 +77,21 @@ private:
             }
         }
         if (best.empty()) {
-            RCLCPP_WARN(get_logger(), "No valid word could be formed from letters '%s'", letters.c_str());
+            RCLCPP_WARN(get_logger(), "No valid word could be formed from 'A'");
             return;
         }
         RCLCPP_INFO(get_logger(), "Solved word: %s", best.c_str());
 
-        // Prepare PoseArray to publish
+        // Publish PoseArray for each letter in solved word
         geometry_msgs::msg::PoseArray out;
         out.header.stamp = now();
         out.header.frame_id = "map";
 
-        // For each letter in solved word, append corresponding initial pose
-        for (char c: best) {
-            char U = std::toupper(c);
-            if (pose_map_.count(U)) {
-                out.poses.push_back(pose_map_[U]);
-            }
+        for (size_t i = 0; i < best.size(); ++i) {
+            out.poses.push_back(last_pose_);
         }
-
-        init_pub_->publish(out);
-        RCLCPP_INFO(get_logger(), "Published %zu initial poses for word '%s'", out.poses.size(), best.c_str());
+        pose_pub_->publish(out);
+        RCLCPP_INFO(get_logger(), "Published %zu poses for word '%s'", out.poses.size(), best.c_str());
     }
 };
 
