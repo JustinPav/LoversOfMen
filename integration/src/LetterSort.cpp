@@ -68,12 +68,14 @@ private:
 
         // Solve longest word from dictionary
         std::ifstream dict("/usr/share/dict/words");
-        std::string word, best;
+        std::string word, best, longestWord;
         while (std::getline(dict, word)) {
             std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-            if (word.size() > letters.size()) continue;
-            if (canFormWord(word, freq) && word.size() > best.size()) {
-                best = word;
+            if (word.length() > letters.length())
+                continue;
+            if (canFormWord(word, freq) && word.length() > best.length())
+            {
+                longestWord = word;
             }
         }
         if (best.empty()) {
@@ -95,7 +97,8 @@ private:
     }
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[])
+{
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<LetterSortNode>());
     rclcpp::shutdown();

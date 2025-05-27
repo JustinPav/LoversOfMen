@@ -91,7 +91,7 @@ This project demonstrates robotic block manipulation using the MoveIt Task Const
    ```
 4. Launch the Perception wrapper:
     ```bash
-   ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_infra1:=true enable_infra1:=false enable_depth:=true
+   ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_infra1:=true enable_depth:=true
    ```
 5. Launch the Perception nodes:
     ```bash
